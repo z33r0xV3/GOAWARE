@@ -11504,49 +11504,60 @@ local function republishKey()
     return true
 end
 
-local bedwarsSource, bedwarsFailure, bedwarsCompiled = downloadBedwars()
-if not bedwarsSource then
-    local failure = bedwarsFailure or bootFailure('bedwars.download', 'no usable BedWars payload')
-	bufferCall('error', failure.stage, failure.error)
-    pcall(function()
-        vape:CreateNotification('GoAware', 'BedWars modules could not be loaded ('..failure.stage..'). Rejoin the game to retry.', 30, 'alert')
-    end)
-    return failure
-end
+--[[ Keyless check: the LuaArmor payload validates script_key server-side and will kick the
+player if the key is invalid or missing. When the keyless stub is detected, skip the payload
+entirely so the utility modules registered above still work and the profile still loads. ]]
+local keyIsKeyless = (type(shared.GoAwareKey) == 'string' and shared.GoAwareKey:find('keyless', 1, true))
+if keyIsKeyless then
+	bufferCall('log', 'bedwars.keyless', 'keyless mode -- skipping LuaArmor BedWars payload')
+	pcall(function()
+		vape:CreateNotification('GoAware', 'Keyless mode: BedWars combat modules are unavailable. Utility modules still work.', 10, 'warning')
+	end)
+else
+	local bedwarsSource, bedwarsFailure, bedwarsCompiled = downloadBedwars()
+	if not bedwarsSource then
+		local failure = bedwarsFailure or bootFailure('bedwars.download', 'no usable BedWars payload')
+		bufferCall('error', failure.stage, failure.error)
+		pcall(function()
+			vape:CreateNotification('GoAware', 'BedWars modules could not be loaded ('..failure.stage..'). Rejoin the game to retry.', 30, 'alert')
+		end)
+		return failure
+	end
 
-local bedwarsFn, bedwarsCompileError = bedwarsCompiled, nil
-if not bedwarsFn then
-    bedwarsFn, bedwarsCompileError = compileBedwarsSource(bedwarsSource, 'bedwars')
-end
-if not bedwarsFn then
-    local failure = bootFailure('bedwars.compile', bedwarsCompileError)
-	bufferCall('error', failure.stage, failure.error)
-    pcall(function()
-        vape:CreateNotification('GoAware', 'Combat modules could not be loaded (bedwars.compile). Rejoin the game to retry.', 30, 'alert')
-    end)
-    return failure
-end
+	local bedwarsFn, bedwarsCompileError = bedwarsCompiled, nil
+	if not bedwarsFn then
+		bedwarsFn, bedwarsCompileError = compileBedwarsSource(bedwarsSource, 'bedwars')
+	end
+	if not bedwarsFn then
+		local failure = bootFailure('bedwars.compile', bedwarsCompileError)
+		bufferCall('error', failure.stage, failure.error)
+		pcall(function()
+			vape:CreateNotification('GoAware', 'Combat modules could not be loaded (bedwars.compile). Rejoin the game to retry.', 30, 'alert')
+		end)
+		return failure
+	end
 
-        --[[ Refuse to run the payload with no key rather than let it discover that itself: a
-        LuaArmor auth failure is not a soft error, it puts up a modal and KICKS the player
-        out of the game. Saying so here costs them their combat modules for the round instead
-        of their session, and names the actual problem. ]]
-if not republishKey() then
-    local failure = bootFailure('bedwars.key', 'no validated key was available for the BedWars payload')
-	bufferCall('error', failure.stage, failure.error)
-    pcall(function()
-        vape:CreateNotification('GoAware', 'Your key was not available when combat modules tried to load. Re-run the goaware loader to fix this.', 30, 'alert')
-    end)
-    return failure
-end
+			--[[ Refuse to run the payload with no key rather than let it discover that itself: a
+			LuaArmor auth failure is not a soft error, it puts up a modal and KICKS the player
+			out of the game. Saying so here costs them their combat modules for the round instead
+			of their session, and names the actual problem. ]]
+	if not republishKey() then
+		local failure = bootFailure('bedwars.key', 'no validated key was available for the BedWars payload')
+		bufferCall('error', failure.stage, failure.error)
+		pcall(function()
+			vape:CreateNotification('GoAware', 'Your key was not available when combat modules tried to load. Re-run the goaware loader to fix this.', 30, 'alert')
+		end)
+		return failure
+	end
 
-local ok, result = xpcall(bedwarsFn, errorTrace)
-if not ok then
-    local failure = bootFailure('bedwars.payload.execute', result)
-	bufferCall('error', failure.stage, failure.error)
-    return failure
+	local ok, result = xpcall(bedwarsFn, errorTrace)
+	if not ok then
+		local failure = bootFailure('bedwars.payload.execute', result)
+		bufferCall('error', failure.stage, failure.error)
+		return failure
+	end
+	if type(result) == 'table' and result.GoAwareBootFailure then
+		return result
+	end
+	return result
 end
-if type(result) == 'table' and result.GoAwareBootFailure then
-    return result
-end
-return result
