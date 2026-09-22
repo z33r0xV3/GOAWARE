@@ -98,8 +98,8 @@ local function rewriteReleaseUrl(url)
 	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/main/', function()
 		return 'https://raw.githubusercontent.com/z33r0xV3/GOAWARE/'..ref..'/'
 	end)
-	value = value:gsub('https://gitlab%.com/goaware/goaware/%-/raw/main/', function()
-		return 'https://gitlab.com/goaware/goaware/-/raw/'..(release.branch or 'main')..'/'
+	value = value:gsub('https://gitlab%.com/pistonware/pistonware/%-/raw/main/', function()
+		return 'https://gitlab.com/pistonware/pistonware/-/raw/'..(release.branch or 'main')..'/'
 	end)
 	value = value:gsub('([?&]sha=)main', '%1'..ref)
 	value = value:gsub('([?&]ref=)main', '%1'..ref)
@@ -114,7 +114,7 @@ local function projectRawUrl(path, ref)
 end
 
 local function protectedRawUrl(ref)
-	return 'https://gitlab.com/goaware/goaware/-/raw/'..(ref or release.branch or 'main')..'/bedwars.lua'
+	return 'https://gitlab.com/pistonware/pistonware/-/raw/'..(ref or release.branch or 'main')..'/bedwars.lua'
 end
 
 shared.GoAwareRawUrl = projectRawUrl

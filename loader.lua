@@ -630,7 +630,7 @@ local function projectRawUrl(path, ref)
 end
 
 local function protectedRawUrl(ref)
-	return 'https://gitlab.com/goaware/goaware/-/raw/'..(ref or release.branch)..'/bedwars.lua'
+	return 'https://gitlab.com/pistonware/pistonware/-/raw/'..(ref or release.branch)..'/bedwars.lua'
 end
 
 local function rewriteProjectUrl(url)
@@ -639,7 +639,7 @@ local function rewriteProjectUrl(url)
 	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/refs/heads/main/', function() return projectRawUrl('', ref) end)
 	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/main/', function() return projectRawUrl('', ref) end)
 	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/main/', function() return projectRawUrl('', ref) end)
-	value = value:gsub('https://gitlab%.com/goaware/goaware/%-/raw/main/', function() return protectedRawUrl(release.branch):gsub('/bedwars%.lua$', '/') end)
+	value = value:gsub('https://gitlab%.com/pistonware/pistonware/%-/raw/main/', function() return protectedRawUrl(release.branch):gsub('/bedwars%.lua$', '/') end)
 	value = value:gsub('(/git/trees/)main', '%1'..release.branch)
 	value = value:gsub('([?&]sha=)main', '%1'..ref)
 	value = value:gsub('([?&]ref=)main', '%1'..ref)

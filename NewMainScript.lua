@@ -74,7 +74,7 @@ local function downloadFile(path, func)
 		for attempt = 1, 4 do
 			local suc, res = pcall(function()
 				if isBedwars then
-					return goawareProtectedHttpGet('https://gitlab.com/goaware/goaware/-/raw/main/bedwars.lua', true, attempt)
+					return goawareProtectedHttpGet('https://gitlab.com/pistonware/pistonware/-/raw/main/bedwars.lua', true, attempt)
 				end
 				return goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/'..relPath, true, attempt)
 			end)
