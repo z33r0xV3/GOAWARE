@@ -88,16 +88,16 @@ local guiService = cloneref(game:GetService('GuiService'))
 local runService = cloneref(game:GetService('RunService'))
 local httpService = cloneref(game:GetService('HttpService'))
 
-local function pistonwareHttpGet(url, nocache, attempt)
-	local adapter = shared.PistonwareDevHttpGet
+local function goawareHttpGet(url, nocache, attempt)
+	local adapter = shared.GoAwareDevHttpGet
 	if type(adapter) == 'function' then
 		return adapter(url, nocache, attempt)
 	end
 	return game:HttpGet(url, nocache)
 end
 
-local function pistonwareRequest(options)
-	local adapter = shared.PistonwareDevRequest
+local function goawareRequest(options)
+	local adapter = shared.GoAwareDevRequest
 	if type(adapter) == 'function' then
 		return adapter(options)
 	end
@@ -389,7 +389,7 @@ end
 --[[
 	A profile name is a FILE PATH, not a label.
 
-	Every load and save builds 'pistonware/profiles/'..Profile..Place..'.txt' out of it and hands
+	Every load and save builds 'goaware/profiles/'..Profile..Place..'.txt' out of it and hands
 	that to the executor's filesystem. So whatever ends up in a profile name is what isfile,
 	readfile and writefile are called with -- and the Profiles tab's name box accepted anything
 	typed or pasted into it, including a 15KB exported profile. That name was then saved as the
@@ -492,74 +492,74 @@ end
 
 do
 	local vapeAssets = {
-		['pistonware/assets/new/add.png'] = 'rbxassetid://121642387707174',
-		['pistonware/assets/new/aim.png'] = 'rbxassetid://122207028123421',
-		['pistonware/assets/new/allowedicon.png'] = 'rbxassetid://112336790299036',
-		['pistonware/assets/new/allowediconmini.png'] = 'rbxassetid://90142384730147',
-		['pistonware/assets/new/back.png'] = 'rbxassetid://80523803497740',
-		['pistonware/assets/new/backmini.png'] = 'rbxassetid://85859225495272',
-		['pistonware/assets/new/bind.png'] = 'rbxassetid://81399857677684',
-		['pistonware/assets/new/bindbkg.png'] = 'rbxassetid://101996225428926',
-		['pistonware/assets/new/blatant.png'] = 'rbxassetid://126929923309265',
-		['pistonware/assets/new/blur.png'] = 'rbxassetid://79246816170155',
-		['pistonware/assets/new/blurnoti.png'] = 'rbxassetid://124705876663719',
-		['pistonware/assets/new/close.png'] = 'rbxassetid://121816018671466',
-		['pistonware/assets/new/closemini.png'] = 'rbxassetid://108320409341289',
-		['pistonware/assets/new/closetiny.png'] = 'rbxassetid://71393233149714',
-		['pistonware/assets/new/colorpreview.png'] = 'rbxassetid://140438628568318',
-		['pistonware/assets/new/combat.png'] = 'rbxassetid://94762732349053',
-		['pistonware/assets/new/customtheme.png'] = 'rbxassetid://91756736022800',
-		['pistonware/assets/new/discord.png'] = 'rbxassetid://99871463341003',
-		['pistonware/assets/new/downexpand.png'] = 'rbxassetid://94197751291504',
-		['pistonware/assets/new/downexpandslider.png'] = 'rbxassetid://90289944682645',
-		['pistonware/assets/new/edit.png'] = 'rbxassetid://105801951237137',
-		['pistonware/assets/new/editlarge.png'] = 'rbxassetid://119233876755282',
-		['pistonware/assets/new/expandarrow.png'] = 'rbxassetid://86360332526471',
-		['pistonware/assets/new/friends.png'] = 'rbxassetid://92957214042038',
-		['pistonware/assets/new/inventory.png'] = 'rbxassetid://93264756888499',
-		['pistonware/assets/new/legit_mode_icon.png'] = 'rbxassetid://102858626075156',
-		['pistonware/assets/new/legit_switch.png'] = 'rbxassetid://127508881124779',
-		['pistonware/assets/new/min.png'] = 'rbxassetid://82175054487146',
-		['pistonware/assets/new/noti_alert.png'] = 'rbxassetid://82356478726846',
-		['pistonware/assets/new/noti_info.png'] = 'rbxassetid://102614825645099',
-		['pistonware/assets/new/noti_warning.png'] = 'rbxassetid://119631730212167',
-		['pistonware/assets/new/notification.png'] = 'rbxassetid://90300780458781',
-		['pistonware/assets/new/npcs.png'] = 'rbxassetid://104434365485227',
-		['pistonware/assets/new/overlaydots.png'] = 'rbxassetid://78012624671930',
-		['pistonware/assets/new/overlays.png'] = 'rbxassetid://136535637407545',
-		['pistonware/assets/new/overlayslarge.png'] = 'rbxassetid://127574141208160',
-		['pistonware/assets/new/pin.png'] = 'rbxassetid://92459145800579',
-		['pistonware/assets/new/players.png'] = 'rbxassetid://105137446428129',
-		['pistonware/assets/new/profiles.png'] = 'rbxassetid://126051451865127',
-		['pistonware/assets/new/radar.png'] = 'rbxassetid://97983828696086',
-		['pistonware/assets/new/rainbow_1.png'] = 'rbxassetid://101329996188554',
-		['pistonware/assets/new/rainbow_2.png'] = 'rbxassetid://72739074644654',
-		['pistonware/assets/new/rainbow_3.png'] = 'rbxassetid://100716555253397',
-		['pistonware/assets/new/rainbow_4.png'] = 'rbxassetid://133424174227092',
-		['pistonware/assets/new/range.png'] = 'rbxassetid://107794917650053',
-		['pistonware/assets/new/rangeindicator.png'] = 'rbxassetid://107038094175283',
-		['pistonware/assets/new/render.png'] = 'rbxassetid://125472576898654',
-		['pistonware/assets/new/search.png'] = 'rbxassetid://115611852955611',
-		['pistonware/assets/new/settingdots.png'] = 'rbxassetid://130896840048276',
-		['pistonware/assets/new/settings.png'] = 'rbxassetid://73820177347303',
-		['pistonware/assets/new/settingsmini.png'] = 'rbxassetid://115732118290997',
-		['pistonware/assets/new/targetinfo.png'] = 'rbxassetid://121604266095276',
-		['pistonware/assets/new/textgui.png'] = 'rbxassetid://99438663817412',
-		['pistonware/assets/new/theme.png'] = 'rbxassetid://111525258317113',
-		['pistonware/assets/new/utility.png'] = 'rbxassetid://108303206513893',
-		['pistonware/assets/new/vape.png'] = 'rbxassetid://99295797606112',
-		['pistonware/assets/new/vapelogo.png'] = 'rbxassetid://126205920310261',
-		['pistonware/assets/new/vapelogomini.png'] = 'rbxassetid://109041903452149',
-		['pistonware/assets/new/v4.png'] = 'rbxassetid://102549752760489',
-		['pistonware/assets/new/v4mini.png'] = 'rbxassetid://115213099001611',
-		['pistonware/assets/new/world.png'] = 'rbxassetid://118917453153459'
+		['goaware/assets/new/add.png'] = 'rbxassetid://121642387707174',
+		['goaware/assets/new/aim.png'] = 'rbxassetid://122207028123421',
+		['goaware/assets/new/allowedicon.png'] = 'rbxassetid://112336790299036',
+		['goaware/assets/new/allowediconmini.png'] = 'rbxassetid://90142384730147',
+		['goaware/assets/new/back.png'] = 'rbxassetid://80523803497740',
+		['goaware/assets/new/backmini.png'] = 'rbxassetid://85859225495272',
+		['goaware/assets/new/bind.png'] = 'rbxassetid://81399857677684',
+		['goaware/assets/new/bindbkg.png'] = 'rbxassetid://101996225428926',
+		['goaware/assets/new/blatant.png'] = 'rbxassetid://126929923309265',
+		['goaware/assets/new/blur.png'] = 'rbxassetid://79246816170155',
+		['goaware/assets/new/blurnoti.png'] = 'rbxassetid://124705876663719',
+		['goaware/assets/new/close.png'] = 'rbxassetid://121816018671466',
+		['goaware/assets/new/closemini.png'] = 'rbxassetid://108320409341289',
+		['goaware/assets/new/closetiny.png'] = 'rbxassetid://71393233149714',
+		['goaware/assets/new/colorpreview.png'] = 'rbxassetid://140438628568318',
+		['goaware/assets/new/combat.png'] = 'rbxassetid://94762732349053',
+		['goaware/assets/new/customtheme.png'] = 'rbxassetid://91756736022800',
+		['goaware/assets/new/discord.png'] = 'rbxassetid://99871463341003',
+		['goaware/assets/new/downexpand.png'] = 'rbxassetid://94197751291504',
+		['goaware/assets/new/downexpandslider.png'] = 'rbxassetid://90289944682645',
+		['goaware/assets/new/edit.png'] = 'rbxassetid://105801951237137',
+		['goaware/assets/new/editlarge.png'] = 'rbxassetid://119233876755282',
+		['goaware/assets/new/expandarrow.png'] = 'rbxassetid://86360332526471',
+		['goaware/assets/new/friends.png'] = 'rbxassetid://92957214042038',
+		['goaware/assets/new/inventory.png'] = 'rbxassetid://93264756888499',
+		['goaware/assets/new/legit_mode_icon.png'] = 'rbxassetid://102858626075156',
+		['goaware/assets/new/legit_switch.png'] = 'rbxassetid://127508881124779',
+		['goaware/assets/new/min.png'] = 'rbxassetid://82175054487146',
+		['goaware/assets/new/noti_alert.png'] = 'rbxassetid://82356478726846',
+		['goaware/assets/new/noti_info.png'] = 'rbxassetid://102614825645099',
+		['goaware/assets/new/noti_warning.png'] = 'rbxassetid://119631730212167',
+		['goaware/assets/new/notification.png'] = 'rbxassetid://90300780458781',
+		['goaware/assets/new/npcs.png'] = 'rbxassetid://104434365485227',
+		['goaware/assets/new/overlaydots.png'] = 'rbxassetid://78012624671930',
+		['goaware/assets/new/overlays.png'] = 'rbxassetid://136535637407545',
+		['goaware/assets/new/overlayslarge.png'] = 'rbxassetid://127574141208160',
+		['goaware/assets/new/pin.png'] = 'rbxassetid://92459145800579',
+		['goaware/assets/new/players.png'] = 'rbxassetid://105137446428129',
+		['goaware/assets/new/profiles.png'] = 'rbxassetid://126051451865127',
+		['goaware/assets/new/radar.png'] = 'rbxassetid://97983828696086',
+		['goaware/assets/new/rainbow_1.png'] = 'rbxassetid://101329996188554',
+		['goaware/assets/new/rainbow_2.png'] = 'rbxassetid://72739074644654',
+		['goaware/assets/new/rainbow_3.png'] = 'rbxassetid://100716555253397',
+		['goaware/assets/new/rainbow_4.png'] = 'rbxassetid://133424174227092',
+		['goaware/assets/new/range.png'] = 'rbxassetid://107794917650053',
+		['goaware/assets/new/rangeindicator.png'] = 'rbxassetid://107038094175283',
+		['goaware/assets/new/render.png'] = 'rbxassetid://125472576898654',
+		['goaware/assets/new/search.png'] = 'rbxassetid://115611852955611',
+		['goaware/assets/new/settingdots.png'] = 'rbxassetid://130896840048276',
+		['goaware/assets/new/settings.png'] = 'rbxassetid://73820177347303',
+		['goaware/assets/new/settingsmini.png'] = 'rbxassetid://115732118290997',
+		['goaware/assets/new/targetinfo.png'] = 'rbxassetid://121604266095276',
+		['goaware/assets/new/textgui.png'] = 'rbxassetid://99438663817412',
+		['goaware/assets/new/theme.png'] = 'rbxassetid://111525258317113',
+		['goaware/assets/new/utility.png'] = 'rbxassetid://108303206513893',
+		['goaware/assets/new/vape.png'] = 'rbxassetid://99295797606112',
+		['goaware/assets/new/vapelogo.png'] = 'rbxassetid://126205920310261',
+		['goaware/assets/new/vapelogomini.png'] = 'rbxassetid://109041903452149',
+		['goaware/assets/new/v4.png'] = 'rbxassetid://102549752760489',
+		['goaware/assets/new/v4mini.png'] = 'rbxassetid://115213099001611',
+		['goaware/assets/new/world.png'] = 'rbxassetid://118917453153459'
 	}
 
 	--[[
 		Every icon this GUI draws comes from the uploaded ids above. No disk, no getcustomasset.
 
 		It used to work the other way on desktop: download all 105 files under
-		pistonware/assets/new from the repo, then for each icon the GUI asked for run an isfile,
+		goaware/assets/new from the repo, then for each icon the GUI asked for run an isfile,
 		a full readfile to prove the file was not truncated, and a getcustomasset that read it a
 		THIRD time and copied it into the client content directory to get a content id back. 75
 		icons during construction, all of it on the critical path before the menu could appear,
@@ -604,21 +604,21 @@ do
 		return true
 	end
 
-	--[[ Points at the pistonware repo, not VapeCompiled, and at main rather than a commit.txt this
+	--[[ Points at the goaware repo, not VapeCompiled, and at main rather than a commit.txt this
 	install never writes. Retried, because a raw host under load returns an error page as the
 	body and caching that poisons the install silently. ]]
 	local function downloadFile(path)
-		local devLoader = shared.PistonwareDevLoadSource
+		local devLoader = shared.GoAwareDevLoadSource
 		if type(devLoader) == 'function' then
 			devLoader(path)
 			return getcustomasset(path)
 		end
 		if not hasContent(path) then
-			local relPath = select(1, path:gsub('pistonware/', ''))
+			local relPath = select(1, path:gsub('goaware/', ''))
 			local data
 			for attempt = 1, 4 do
 				local success, res = pcall(function()
-					return pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/main/'..relPath, true, attempt)
+					return goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/'..relPath, true, attempt)
 				end)
 				if success and res and res ~= '' and res ~= '404: Not Found' then
 					data = res
@@ -777,7 +777,7 @@ uipallet = {
 }
 
 do
-	local data = isfile('pistonware/profiles/color.txt') and loadJson('pistonware/profiles/color.txt')
+	local data = isfile('goaware/profiles/color.txt') and loadJson('goaware/profiles/color.txt')
 	if data then
 		uipallet.Main = data.Main and Color3.fromRGB(unpack(data.Main)) or uipallet.Main
 		uipallet.Text = data.Text and Color3.fromRGB(unpack(data.Text)) or uipallet.Text
@@ -831,7 +831,7 @@ local function addBlur(parent, notif, old)
 		blur.Size = UDim2.new(1, 89, 1, 52)
 		blur.Position = UDim2.fromOffset(-48, -31)
 		blur.BackgroundTransparency = 1
-		blur.Image = getvapeasset('pistonware/assets/new/'..(notif and 'blurnoti' or 'blur')..'.png')
+		blur.Image = getvapeasset('goaware/assets/new/'..(notif and 'blurnoti' or 'blur')..'.png')
 		blur.ScaleType = Enum.ScaleType.Slice
 		blur.SliceCenter = Rect.new(52, 31, 261, 502)
 		blur.Parent = parent
@@ -1055,7 +1055,7 @@ local function addCloseButton(parent, mini, offset)
 	close.AutoButtonColor = false
 	close.BackgroundColor3 = Color3.new(1, 1, 1)
 	close.BackgroundTransparency = 1
-	close.Image = getvapeasset('pistonware/assets/new/'..(mini and 'closemini' or 'close')..'.png')
+	close.Image = getvapeasset('goaware/assets/new/'..(mini and 'closemini' or 'close')..'.png')
 	close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 	close.ImageTransparency = 0.5
 	close.Name = 'Close'
@@ -1380,7 +1380,7 @@ function vape:CreateNotification(title, text, duration, type)
 		local notification = Instance.new('ImageLabel')
 		notification.BackgroundTransparency = 1
 		notification.Position = UDim2.new(1, 0, 1, -(29 + (78 * index)))
-		notification.Image = getvapeasset('pistonware/assets/new/notification.png')
+		notification.Image = getvapeasset('goaware/assets/new/notification.png')
 		notification.ScaleType = Enum.ScaleType.Slice
 		notification.SliceCenter = Rect.new(7, 7, 9, 9)
 		notification.ZIndex = 5
@@ -1388,7 +1388,7 @@ function vape:CreateNotification(title, text, duration, type)
 		addBlur(notification, true, true)
 		local iconshadow = Instance.new('ImageLabel')
 		iconshadow.BackgroundTransparency = 1
-		iconshadow.Image = getvapeasset('pistonware/assets/new/noti_'..(type or 'info')..'.png')
+		iconshadow.Image = getvapeasset('goaware/assets/new/noti_'..(type or 'info')..'.png')
 		iconshadow.ImageColor3 = Color3.new()
 		iconshadow.ImageTransparency = 0.5
 		iconshadow.Position = UDim2.fromOffset(-5, -8)
@@ -1501,8 +1501,8 @@ function vape:Load(skipgui, profile)
 	local canSave = true
 	local toggleCount = 0
 
-	if isfile('pistonware/profiles/'..game.GameId..'.gui.txt') then
-		guiData = loadJson('pistonware/profiles/'..game.GameId..'.gui.txt')
+	if isfile('goaware/profiles/'..game.GameId..'.gui.txt') then
+		guiData = loadJson('goaware/profiles/'..game.GameId..'.gui.txt')
 		if not guiData then
 			guiData = {Categories = {}}
 			self:CreateNotification('Vape', 'Failed to load GUI settings.', 10, 'alert')
@@ -1539,8 +1539,8 @@ function vape:Load(skipgui, profile)
 		self.Categories.Profiles:ChangeValue('default', true)
 	end
 
-	if isfile('pistonware/profiles/'..self.Profile..self.Place..'.txt') then
-		local mainData = loadJson('pistonware/profiles/'..self.Profile..self.Place..'.txt')
+	if isfile('goaware/profiles/'..self.Profile..self.Place..'.txt') then
+		local mainData = loadJson('goaware/profiles/'..self.Profile..self.Place..'.txt')
 		if not mainData then
 			mainData = {Categories = {}, Modules = {}, Legit = {}}
 			self:CreateNotification('Vape', 'Failed to load '..self.Profile..' profile.', 10, 'alert')
@@ -1660,7 +1660,7 @@ function vape:Load(skipgui, profile)
 		button.Parent = gui
 		local image = Instance.new('ImageLabel')
 		image.BackgroundTransparency = 1
-		image.Image = getvapeasset('pistonware/assets/new/vape.png')
+		image.Image = getvapeasset('goaware/assets/new/vape.png')
 		image.Position = UDim2.fromOffset(6, 6)
 		image.Size = UDim2.fromOffset(20, 20)
 		image.Parent = button
@@ -1701,9 +1701,9 @@ end
 	re-apply that used to be rejected here reverted those changes because it walked all of them.
 ]]
 function vape:LoadLate()
-	if shared.PistonwareBootFailed or not self.Profile then return 0 end
+	if shared.GoAwareBootFailed or not self.Profile then return 0 end
 
-	local path = 'pistonware/profiles/'..self.Profile..self.Place..'.txt'
+	local path = 'goaware/profiles/'..self.Profile..self.Place..'.txt'
 	if not isfile(path) then return 0 end
 
 	local mainData = loadJson(path)
@@ -1807,13 +1807,13 @@ function vape:LoadGUI()
 	-- Time left on the key, from the expiry the loader stored. Developer runs count as lifetime;
 	-- keeps the discord line when an older loader stored nothing.
 	local function keyDuration()
-		local expire = tonumber(shared.PistonwareKeyExpire)
-		if not expire and shared.PistonwareDeveloper then expire = -1 end
+		local expire = tonumber(shared.GoAwareKeyExpire)
+		if not expire and shared.GoAwareDeveloper then expire = -1 end
 		if not expire then return nil end
-		local prefix = 'Thank you for choosing Pistonware. Remaining Key Duration: '
-		if expire < 0 then return 'Thank you for choosing Pistonware.' end
+		local prefix = 'Thank you for choosing GoAware. Remaining Key Duration: '
+		if expire < 0 then return 'Thank you for choosing GoAware.' end
 		local left = math.max(expire - os.time(), 0)
-		if left == 0 then return 'Thank you for choosing Pistonware. Your key has expired.' end
+		if left == 0 then return 'Thank you for choosing GoAware. Your key has expired.' end
 		local function unit(n, word)
 			return n..' '..word..(n == 1 and '' or 's')
 		end
@@ -1871,32 +1871,32 @@ function vape:LoadGUI()
 	
 	vape:CreateCategory({
 		Name = 'Combat',
-		Icon = getvapeasset('pistonware/assets/new/combat.png'),
+		Icon = getvapeasset('goaware/assets/new/combat.png'),
 		Size = UDim2.fromOffset(13, 14)
 	})
 	vape:CreateCategory({
 		Name = 'Blatant',
-		Icon = getvapeasset('pistonware/assets/new/blatant.png'),
+		Icon = getvapeasset('goaware/assets/new/blatant.png'),
 		Size = UDim2.fromOffset(14, 14)
 	})
 	vape:CreateCategory({
 		Name = 'Render',
-		Icon = getvapeasset('pistonware/assets/new/render.png'),
+		Icon = getvapeasset('goaware/assets/new/render.png'),
 		Size = UDim2.fromOffset(15, 14)
 	})
 	vape:CreateCategory({
 		Name = 'Utility',
-		Icon = getvapeasset('pistonware/assets/new/utility.png'),
+		Icon = getvapeasset('goaware/assets/new/utility.png'),
 		Size = UDim2.fromOffset(15, 14)
 	})
 	vape:CreateCategory({
 		Name = 'World',
-		Icon = getvapeasset('pistonware/assets/new/world.png'),
+		Icon = getvapeasset('goaware/assets/new/world.png'),
 		Size = UDim2.fromOffset(14, 14)
 	})
 	vape:CreateCategory({
 		Name = 'Inventory',
-		Icon = getvapeasset('pistonware/assets/new/inventory.png'),
+		Icon = getvapeasset('goaware/assets/new/inventory.png'),
 		Size = UDim2.fromOffset(15, 14)
 	})
 	--[[ Minigames is not in the upstream rewrite, but it is not optional here: bedwars.lua alone
@@ -1909,7 +1909,7 @@ function vape:LoadGUI()
 	assigned to .Image. ]]
 	vape:CreateCategory({
 		Name = 'Minigames',
-		Icon = getvapeasset('pistonware/assets/new/utility.png'),
+		Icon = getvapeasset('goaware/assets/new/utility.png'),
 		Size = UDim2.fromOffset(15, 14)
 	})
 
@@ -1933,7 +1933,7 @@ function vape:LoadGUI()
 	
 		friends = vape:CreateCategoryList({
 			Name = 'Friends',
-			Icon = getvapeasset('pistonware/assets/new/friends.png'),
+			Icon = getvapeasset('goaware/assets/new/friends.png'),
 			Size = UDim2.fromOffset(17, 16),
 			Placeholder = 'Roblox username',
 			Color = Color3.fromRGB(5, 134, 105),
@@ -1986,7 +1986,7 @@ function vape:LoadGUI()
 	]]
 	local profilescategory = vape:CreateCategoryList({
 		Name = 'Profiles',
-		Icon = getvapeasset('pistonware/assets/new/profiles.png'),
+		Icon = getvapeasset('goaware/assets/new/profiles.png'),
 		Size = UDim2.fromOffset(17, 10),
 		Position = UDim2.fromOffset(12, 16),
 		Placeholder = 'Type name',
@@ -1996,7 +1996,7 @@ function vape:LoadGUI()
 	--[[
 		Profile sync -- 'Sync to latest profiles', plus the Blatant/Legit default picker.
 
-		Redownloads pistonware/profiles the way loader.lua does on a first install: every file
+		Redownloads goaware/profiles the way loader.lua does on a first install: every file
 		the repo keeps in that folder, pulled from the raw host through the same 4-attempt retry
 		(raw hosts 504 intermittently, and an empty body would otherwise land as a corrupt file).
 
@@ -2011,14 +2011,14 @@ function vape:LoadGUI()
 	-- disk under its own name and must never be fetched from GitHub, and every other path goes
 	-- back through the loader so the key gate re-runs.
 	local function reinjectThroughLoader()
-		if shared.PistonwareDeveloper and isfile('pistonware/loaderdev.lua') then
-			loadstring(readfile('pistonware/loaderdev.lua'), 'loader')()
+		if shared.GoAwareDeveloper and isfile('goaware/loaderdev.lua') then
+			loadstring(readfile('goaware/loaderdev.lua'), 'loader')()
 		else
-			loadstring(pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/main/loader.lua', true), 'loader')()
+			loadstring(goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/loader.lua', true), 'loader')()
 		end
 	end
 
-	-- pistonware/profiles is stamped with the commit it was pulled from, so a sync that would
+	-- goaware/profiles is stamped with the commit it was pulled from, so a sync that would
 	-- change nothing can be turned away before it spends any requests finding that out.
 	--
 	-- loader.lua stamps the SAME file with its own 'p1-' fingerprint (a hash of the profile blob
@@ -2029,7 +2029,7 @@ function vape:LoadGUI()
 	-- not do what the button says. loader.lua already migrates a 40-char sha it finds here, so
 	-- writing one back does not make it prompt.
 	local function localProfileCommit()
-		local suc, res = pcall(readfile, 'pistonware/profiles/profilecommit.txt')
+		local suc, res = pcall(readfile, 'goaware/profiles/profilecommit.txt')
 		if not (suc and type(res) == 'string') then return nil end
 		res = res:gsub('%s', '')
 		return res ~= '' and res or nil
@@ -2037,7 +2037,7 @@ function vape:LoadGUI()
 
 	local function latestProfileCommit()
 		local suc, res = pcall(function()
-			return pistonwareHttpGet('https://api.github.com/repos/themagicpiston/pistonware/commits?path=profiles&sha=main&per_page=1', true)
+			return goawareHttpGet('https://api.github.com/repos/z33r0xV3/GOAWARE/commits?path=profiles&sha=main&per_page=1', true)
 		end)
 		if not (suc and res and res ~= '' and res ~= '404: Not Found') then return nil end
 		local ok, body = pcall(function()
@@ -2050,7 +2050,7 @@ function vape:LoadGUI()
 	-- Being on the latest commit is not enough on its own: the sync exists to put both shipped
 	-- configs for this place on disk, so a missing one has to let it through regardless.
 	local function hasBothConfigs()
-		return isfile('pistonware/profiles/blatant'..vape.Place..'.txt') and isfile('pistonware/profiles/legit'..vape.Place..'.txt')
+		return isfile('goaware/profiles/blatant'..vape.Place..'.txt') and isfile('goaware/profiles/legit'..vape.Place..'.txt')
 	end
 
 	--[[
@@ -2097,11 +2097,11 @@ function vape:LoadGUI()
 	-- serves CDN-cached content for a few minutes after a push, so a branch-head fetch can quietly
 	-- reinstall the old profiles and then get stamped with the new commit, blocking every later sync.
 	local function downloadProfileFile(path, commit)
-		local relPath = select(1, path:gsub('pistonware/', ''))
+		local relPath = select(1, path:gsub('goaware/', ''))
 		local content
 		for attempt = 1, 4 do
 			local suc, res = pcall(function()
-				return pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/'..(commit or 'main')..'/'..relPath, true, attempt)
+				return goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/'..(commit or 'main')..'/'..relPath, true, attempt)
 			end)
 			if suc and res and res ~= '' and res ~= '404: Not Found' then
 				content = res
@@ -2123,7 +2123,7 @@ function vape:LoadGUI()
 	local function downloadProfiles(commit)
 		local reqSuc, res = pcall(function()
 			-- listing pinned too, so it can never describe a different commit than the files below
-			return pistonwareHttpGet('https://api.github.com/repos/themagicpiston/pistonware/contents/profiles'..(commit and ('?ref='..commit) or ''), true)
+			return goawareHttpGet('https://api.github.com/repos/z33r0xV3/GOAWARE/contents/profiles'..(commit and ('?ref='..commit) or ''), true)
 		end)
 		if not (reqSuc and res and res ~= '' and res ~= '404: Not Found') then
 			return nil, 'Profile sync failed (could not reach GitHub).'
@@ -2154,7 +2154,7 @@ function vape:LoadGUI()
 				-- pcall'd so a worker that throws is still counted. It used to decrement the
 				-- counter only on the success path and join on a BindableEvent with no timeout, so
 				-- one file that errored left the sync button spinning for the rest of the session.
-				local ok, got = pcall(downloadProfileFile, 'pistonware/'..({v.path:gsub(' ', '%%20')})[1], commit)
+				local ok, got = pcall(downloadProfileFile, 'goaware/'..({v.path:gsub(' ', '%%20')})[1], commit)
 				if ok and got then
 					synced += 1
 				else
@@ -2223,7 +2223,7 @@ function vape:LoadGUI()
 			if latest and latest == localProfileCommit() and hasBothConfigs() then
 				syncing = false
 				syncbutton.Text = 'Profiles already up to date'
-				vape:CreateNotification('Pistonware', 'Profiles are already on the latest commit, nothing to sync.', 10)
+				vape:CreateNotification('GoAware', 'Profiles are already on the latest commit, nothing to sync.', 10)
 				return
 			end
 
@@ -2236,13 +2236,13 @@ function vape:LoadGUI()
 			syncing = false
 			if not synced then
 				syncbutton.Text = 'Sync to latest profiles'
-				vape:CreateNotification('Pistonware', message, 10, 'alert')
+				vape:CreateNotification('GoAware', message, 10, 'alert')
 				return
 			end
 			-- Stamped only once the files are down, and only when the commit was readable in the first
 			-- place, so a half-finished or unverified sync still re-checks next time.
 			if latest then
-				pcall(writefile, 'pistonware/profiles/profilecommit.txt', latest)
+				pcall(writefile, 'goaware/profiles/profilecommit.txt', latest)
 			end
 
 			-- Saving stops here rather than at the reload. A module toggled from now on would go
@@ -2257,7 +2257,7 @@ function vape:LoadGUI()
 			pending, syncmessage = true, message
 			syncbutton.Text = 'Synced, choose a config'
 			refreshConfigButtons()
-			vape:CreateNotification('Pistonware', message..' Choose Blatant or Legit below to load one.', 10)
+			vape:CreateNotification('GoAware', message..' Choose Blatant or Legit below to load one.', 10)
 		end)
 
 		-- Which shipped config loads by default. There is nothing extra to persist: the default is
@@ -2313,7 +2313,7 @@ function vape:LoadGUI()
 				-- A config can only be offered once its file is on disk: before the first sync there
 				-- may be none at all, so the row hides itself rather than showing a button whose only
 				-- possible answer is an error.
-				button.Visible = pending or isfile('pistonware/profiles/'..name..vape.Place..'.txt')
+				button.Visible = pending or isfile('goaware/profiles/'..name..vape.Place..'.txt')
 				anyvisible = anyvisible or button.Visible
 			end
 			-- an invisible row is skipped by the list layout, so the gap closes with it
@@ -2322,8 +2322,8 @@ function vape:LoadGUI()
 		end
 
 		local function selectConfig(name)
-			if not isfile('pistonware/profiles/'..name..vape.Place..'.txt') then
-				vape:CreateNotification('Pistonware', 'There is no '..name..' config for this game yet, press Sync to latest profiles first.', 10, 'alert')
+			if not isfile('goaware/profiles/'..name..vape.Place..'.txt') then
+				vape:CreateNotification('GoAware', 'There is no '..name..' config for this game yet, press Sync to latest profiles first.', 10, 'alert')
 				return
 			end
 			-- Always a full reload, never an in-place profile switch. The GUI theme colour, window
@@ -2342,7 +2342,7 @@ function vape:LoadGUI()
 			-- config has to be written in there directly. Going through Save instead would rewrite the
 			-- profile file a download just refreshed.
 			pcall(function()
-				local guipath = 'pistonware/profiles/'..game.GameId..'.gui.txt'
+				local guipath = 'goaware/profiles/'..game.GameId..'.gui.txt'
 				local guidata = isfile(guipath) and loadJson(guipath)
 				if type(guidata) ~= 'table' then return end
 				-- Categories.Profiles.List is where this GUI keeps the profile list; see the note
@@ -2365,7 +2365,7 @@ function vape:LoadGUI()
 				writefile(guipath, httpService:JSONEncode(guidata))
 			end)
 			-- nil unless a sync is being finished off, which is the only time main.lua should report one
-			shared.PistonwareSyncResult = syncmessage
+			shared.GoAwareSyncResult = syncmessage
 			shared.VapeCustomProfile = name
 			shared.vapereload = true
 			reinjectThroughLoader()
@@ -2429,19 +2429,19 @@ function vape:LoadGUI()
 	--[[
 		Profile import / export.
 
-		A profile is one JSON file on disk (pistonware/profiles/<name><Place>.txt), so sharing
+		A profile is one JSON file on disk (goaware/profiles/<name><Place>.txt), so sharing
 		one is only a matter of moving that file's text around. It travels inside an envelope
 		rather than raw: the envelope carries the name it was exported under and the place it
 		belongs to, which is what lets Import name the new file and warn when a config from a
 		different game is pasted in. A raw config is still accepted -- pasting the file contents
 		straight in is the obvious thing to try -- it just arrives without a name.
 
-		Both directions go through the clipboard first and pistonware/exports second. Clipboard
+		Both directions go through the clipboard first and goaware/exports second. Clipboard
 		access is an executor extension and plenty of them do not have it, so the folder is not
 		a fallback that only appears on failure: an export always writes it, and an import that
-		finds nothing on the clipboard reads pistonware/exports/import.txt.
+		finds nothing on the clipboard reads goaware/exports/import.txt.
 	]]
-	local EXPORT_FOLDER = 'pistonware/exports'
+	local EXPORT_FOLDER = 'goaware/exports'
 
 	local function ensureFolder(path)
 		local ok, exists = pcall(isfolder, path)
@@ -2746,15 +2746,15 @@ function vape:LoadGUI()
 		export read off the file alone would quietly ship the older state. ]]
 		pcall(function() vape:Save() end)
 
-		local path = 'pistonware/profiles/'..vape.Profile..vape.Place..'.txt'
+		local path = 'goaware/profiles/'..vape.Profile..vape.Place..'.txt'
 		local data = isfile(path) and loadJson(path)
 		if type(data) ~= 'table' then
-			vape:CreateNotification('Pistonware', 'Nothing to export -- the '..vape.Profile..' profile has no file for this game yet.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'Nothing to export -- the '..vape.Profile..' profile has no file for this game yet.', 10, 'alert')
 			return
 		end
 
 		local suc, blob = pcall(httpService.JSONEncode, httpService, {
-			Pistonware = 'profile',
+			GoAware = 'profile',
 			Version = 1,
 			Name = vape.Profile,
 			Place = vape.Place,
@@ -2762,7 +2762,7 @@ function vape:LoadGUI()
 			Data = data
 		})
 		if not suc then
-			vape:CreateNotification('Pistonware', 'Export failed, '..tostring(blob), 10, 'alert')
+			vape:CreateNotification('GoAware', 'Export failed, '..tostring(blob), 10, 'alert')
 			return
 		end
 
@@ -2770,11 +2770,11 @@ function vape:LoadGUI()
 		local filename = 'profile-'..vape.Profile..vape.Place
 		local wrote = writeExport(filename, blob)
 		if setClipboard(blob) then
-			vape:CreateNotification('Pistonware', 'Copied the <font color="#FFAA00">'..vape.Profile..'</font> profile to your clipboard'..(wrote and ' and to '..EXPORT_FOLDER..'/'..filename..'.txt.' or '.'), 10)
+			vape:CreateNotification('GoAware', 'Copied the <font color="#FFAA00">'..vape.Profile..'</font> profile to your clipboard'..(wrote and ' and to '..EXPORT_FOLDER..'/'..filename..'.txt.' or '.'), 10)
 		elseif wrote then
-			vape:CreateNotification('Pistonware', 'Your executor has no clipboard access, so the profile was written to '..EXPORT_FOLDER..'/'..filename..'.txt instead.', 10)
+			vape:CreateNotification('GoAware', 'Your executor has no clipboard access, so the profile was written to '..EXPORT_FOLDER..'/'..filename..'.txt instead.', 10)
 		else
-			vape:CreateNotification('Pistonware', 'Export failed -- could not reach the clipboard or write to '..EXPORT_FOLDER..'.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'Export failed -- could not reach the clipboard or write to '..EXPORT_FOLDER..'.', 10, 'alert')
 		end
 	end
 
@@ -2784,13 +2784,13 @@ function vape:LoadGUI()
 	local function importProfile()
 		local blob = readImport(profileimportbox, EXPORT_FOLDER..'/importprofile.txt')
 		if not blob then
-			vape:CreateNotification('Pistonware', 'Nothing to import -- paste a profile into the box above, or copy one to your clipboard.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'Nothing to import -- paste a profile into the box above, or copy one to your clipboard.', 10, 'alert')
 			return
 		end
 
 		local decoded = decodeImport(blob)
 		if not decoded then
-			vape:CreateNotification('Pistonware', 'That does not look like a profile (it is not readable JSON).', 10, 'alert')
+			vape:CreateNotification('GoAware', 'That does not look like a profile (it is not readable JSON).', 10, 'alert')
 			return
 		end
 
@@ -2798,13 +2798,13 @@ function vape:LoadGUI()
 		recognised by the keys vape:Save writes, so a random JSON object cannot land on disk as a
 		profile that then fails to load with no explanation. ]]
 		local payload, name = decoded, nil
-		if decoded.Pistonware == 'profile' and type(decoded.Data) == 'table' then
+		if decoded.GoAware == 'profile' and type(decoded.Data) == 'table' then
 			payload, name = decoded.Data, decoded.Name
 			if type(decoded.Place) == 'string' and decoded.Place ~= vape.Place then
-				vape:CreateNotification('Pistonware', 'Heads up: that profile was exported for a different game, most of its modules will not exist here.', 10, 'alert')
+				vape:CreateNotification('GoAware', 'Heads up: that profile was exported for a different game, most of its modules will not exist here.', 10, 'alert')
 			end
 		elseif type(payload.Modules) ~= 'table' and type(payload.Categories) ~= 'table' then
-			vape:CreateNotification('Pistonware', 'That JSON is not a pistonware profile.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'That JSON is not a goaware profile.', 10, 'alert')
 			return
 		end
 
@@ -2812,9 +2812,9 @@ function vape:LoadGUI()
 		name = sanitizeName(name) or 'imported'
 		local existed = profilescategory:GetValue(name) ~= nil
 
-		local ok, err = writeJson('pistonware/profiles/'..name..vape.Place..'.txt', payload)
+		local ok, err = writeJson('goaware/profiles/'..name..vape.Place..'.txt', payload)
 		if not ok then
-			vape:CreateNotification('Pistonware', 'Import failed, '..tostring(err), 10, 'alert')
+			vape:CreateNotification('GoAware', 'Import failed, '..tostring(err), 10, 'alert')
 			return
 		end
 
@@ -2831,7 +2831,7 @@ function vape:LoadGUI()
 			profileimportbox:SetValue('')
 		end
 
-		vape:CreateNotification('Pistonware', (existed and 'Replaced <font color="#FFAA00">' or 'Imported as <font color="#FFAA00">')..name..'</font>, click it in the Profiles list to load it.', 10)
+		vape:CreateNotification('GoAware', (existed and 'Replaced <font color="#FFAA00">' or 'Imported as <font color="#FFAA00">')..name..'</font>, click it in the Profiles list to load it.', 10)
 	end
 
 	--[[
@@ -2889,8 +2889,8 @@ function vape:LoadGUI()
 		FFlags
 
 		Fast flags are Roblox's own client switches, and it is the executor that sets them --
-		pistonware never can on its own. What this tab owns is the LIST: one named set of flags
-		per file in pistonware/fflags, of which exactly one is current.
+		goaware never can on its own. What this tab owns is the LIST: one named set of flags
+		per file in goaware/fflags, of which exactly one is current.
 
 		Built on the same list shape as the Profiles tab (Swap = true, see CategoryList), so the
 		rows are identical to look at and to use: type a name to add one, click a row to make it
@@ -2899,10 +2899,10 @@ function vape:LoadGUI()
 		difference -- a profile swap loads a config, this writes flags into the client.
 
 		A new entry starts as an empty set. It gets filled in either by importing one or by
-		editing pistonware/fflags/<name>.txt by hand, which is why Apply exists as a button as
+		editing goaware/fflags/<name>.txt by hand, which is why Apply exists as a button as
 		well: a file edited outside the GUI should be applicable without swapping away and back.
 	]]
-	local FFLAG_FOLDER = 'pistonware/fflags'
+	local FFLAG_FOLDER = 'goaware/fflags'
 	local fflags
 	local function fflagPath(name)
 		return FFLAG_FOLDER..'/'..name..'.txt'
@@ -2919,7 +2919,7 @@ function vape:LoadGUI()
 		--[[ The rewrite ships no fflags icon, and getvapeasset on a path it does not know returns
 		a value that throws 'ContentId formatting failed' the moment it is assigned to .Image --
 		so this borrows utility.png the way the Minigames category above does. ]]
-		Icon = getvapeasset('pistonware/assets/new/utility.png'),
+		Icon = getvapeasset('goaware/assets/new/utility.png'),
 		Size = UDim2.fromOffset(15, 14),
 		Placeholder = 'Type name',
 		Swap = true,
@@ -3116,23 +3116,23 @@ function vape:LoadGUI()
 
 		if total <= 0 then
 			if not quiet then
-				vape:CreateNotification('Pistonware', 'Switched to <font color="#FFAA00">'..selectedFFlag..'</font>, which has no flags in it yet.', 5)
+				vape:CreateNotification('GoAware', 'Switched to <font color="#FFAA00">'..selectedFFlag..'</font>, which has no flags in it yet.', 5)
 			end
 			return 0, 0, 0, verifiable
 		end
 
 		if not setter then
-			vape:CreateNotification('Pistonware', 'Your executor cannot set fast flags (no setfflag), so the list here is stored but not applied.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'Your executor cannot set fast flags (no setfflag), so the list here is stored but not applied.', 10, 'alert')
 			return total, total, 0, verifiable
 		end
 
 		if failed >= total then
-			vape:CreateNotification('Pistonware', 'None of the '..total..' flags in '..selectedFFlag..' could be applied.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'None of the '..total..' flags in '..selectedFFlag..' could be applied.', 10, 'alert')
 			return total, failed, 0, verifiable
 		end
 
 		if not quiet then
-			vape:CreateNotification('Pistonware', 'Applied '..(total - failed)..' of '..total..' flags from <font color="#FFAA00">'..selectedFFlag..'</font>'..applySuffix(total, failed, verified, verifiable), 10,
+			vape:CreateNotification('GoAware', 'Applied '..(total - failed)..' of '..total..' flags from <font color="#FFAA00">'..selectedFFlag..'</font>'..applySuffix(total, failed, verified, verifiable), 10,
 				(verifiable and verified <= 0) and 'alert' or nil)
 		end
 
@@ -3143,18 +3143,18 @@ function vape:LoadGUI()
 		local flags = selectedFlags()
 		local count = countFlags(flags)
 		if count <= 0 then
-			vape:CreateNotification('Pistonware', 'Nothing to export -- '..selectedFFlag..' has no flags in it.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'Nothing to export -- '..selectedFFlag..' has no flags in it.', 10, 'alert')
 			return
 		end
 
 		local suc, blob = pcall(httpService.JSONEncode, httpService, {
-			Pistonware = 'fflags',
+			GoAware = 'fflags',
 			Version = 1,
 			Name = selectedFFlag,
 			Data = flags
 		})
 		if not suc then
-			vape:CreateNotification('Pistonware', 'Export failed, '..tostring(blob), 10, 'alert')
+			vape:CreateNotification('GoAware', 'Export failed, '..tostring(blob), 10, 'alert')
 			return
 		end
 
@@ -3162,11 +3162,11 @@ function vape:LoadGUI()
 		local filename = 'fflags-'..(sanitizeName(selectedFFlag) or 'export')
 		local wrote = writeExport(filename, blob)
 		if setClipboard(blob) then
-			vape:CreateNotification('Pistonware', 'Copied '..count..' flag'..(count == 1 and '' or 's')..' from <font color="#FFAA00">'..selectedFFlag..'</font> to your clipboard'..(wrote and ' and to '..EXPORT_FOLDER..'/'..filename..'.txt.' or '.'), 10)
+			vape:CreateNotification('GoAware', 'Copied '..count..' flag'..(count == 1 and '' or 's')..' from <font color="#FFAA00">'..selectedFFlag..'</font> to your clipboard'..(wrote and ' and to '..EXPORT_FOLDER..'/'..filename..'.txt.' or '.'), 10)
 		elseif wrote then
-			vape:CreateNotification('Pistonware', 'Your executor has no clipboard access, so '..count..' flags were written to '..EXPORT_FOLDER..'/'..filename..'.txt instead.', 10)
+			vape:CreateNotification('GoAware', 'Your executor has no clipboard access, so '..count..' flags were written to '..EXPORT_FOLDER..'/'..filename..'.txt instead.', 10)
 		else
-			vape:CreateNotification('Pistonware', 'Export failed -- could not reach the clipboard or write to '..EXPORT_FOLDER..'.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'Export failed -- could not reach the clipboard or write to '..EXPORT_FOLDER..'.', 10, 'alert')
 		end
 	end
 
@@ -3192,13 +3192,13 @@ function vape:LoadGUI()
 	local function importFFlags()
 		local blob = readImport(fflagimportbox, FFLAG_FOLDER..'/import.txt')
 		if not blob then
-			vape:CreateNotification('Pistonware', 'Nothing to add -- paste an FFlag set into the box above, or copy one to your clipboard.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'Nothing to add -- paste an FFlag set into the box above, or copy one to your clipboard.', 10, 'alert')
 			return
 		end
 
 		local decoded = decodeImport(blob)
 		if not decoded then
-			vape:CreateNotification('Pistonware', 'That does not look like an FFlag set (it is not readable JSON).', 10, 'alert')
+			vape:CreateNotification('GoAware', 'That does not look like an FFlag set (it is not readable JSON).', 10, 'alert')
 			return
 		end
 
@@ -3207,12 +3207,12 @@ function vape:LoadGUI()
 		The envelope's name is deliberately ignored now -- where the flags go is the row you have
 		selected, not something the sender gets to decide. ]]
 		local payload = decoded
-		if decoded.Pistonware == 'fflags' and type(decoded.Data) == 'table' then
+		if decoded.GoAware == 'fflags' and type(decoded.Data) == 'table' then
 			payload = decoded.Data
 		end
 
 		if countFlags(payload) <= 0 then
-			vape:CreateNotification('Pistonware', 'That JSON has no flags in it.', 10, 'alert')
+			vape:CreateNotification('GoAware', 'That JSON has no flags in it.', 10, 'alert')
 			return
 		end
 
@@ -3237,7 +3237,7 @@ function vape:LoadGUI()
 		ensureFolder(FFLAG_FOLDER)
 		local ok, err = writeJson(fflagPath(target), flags)
 		if not ok then
-			vape:CreateNotification('Pistonware', 'Could not save to '..target..', '..tostring(err), 10, 'alert')
+			vape:CreateNotification('GoAware', 'Could not save to '..target..', '..tostring(err), 10, 'alert')
 			return
 		end
 
@@ -3246,7 +3246,7 @@ function vape:LoadGUI()
 		end
 
 		local total, failed, verified, verifiable = applyFFlags(true)
-		vape:CreateNotification('Pistonware',
+		vape:CreateNotification('GoAware',
 			'Added '..added..' flag'..(added == 1 and '' or 's')..
 			(changed > 0 and ' and updated '..changed or '')..
 			' in <font color="#FFAA00">'..target..'</font> -- applied '..(total - failed)..' of '..total..
@@ -3302,12 +3302,12 @@ function vape:LoadGUI()
 				return writeJson(fflagPath(target), {})
 			end)
 			if not ok then
-				vape:CreateNotification('Pistonware', 'Could not clear '..target..', '..tostring(err), 10, 'alert')
+				vape:CreateNotification('GoAware', 'Could not clear '..target..', '..tostring(err), 10, 'alert')
 				return
 			end
 
 			if emptied <= 0 then
-				vape:CreateNotification('Pistonware', '<font color="#FFAA00">'..target..'</font> was already empty.', 5)
+				vape:CreateNotification('GoAware', '<font color="#FFAA00">'..target..'</font> was already empty.', 5)
 				return
 			end
 
@@ -3316,7 +3316,7 @@ function vape:LoadGUI()
 			means the profile stops setting them on the next apply, and the ones already in the
 			client stay until it restarts. Saying so is the honest version -- silently emptying
 			the list while the game still looks flagged is what would confuse. ]]
-			vape:CreateNotification('Pistonware', 'Cleared '..emptied..' flag'..(emptied == 1 and '' or 's')..' from <font color="#FFAA00">'..target..'</font>. Flags already set stay until you restart Roblox.', 10)
+			vape:CreateNotification('GoAware', 'Cleared '..emptied..' flag'..(emptied == 1 and '' or 's')..' from <font color="#FFAA00">'..target..'</font>. Flags already set stay until you restart Roblox.', 10)
 		end,
 		Tooltip = 'Removes every flag from the selected profile, keeping the profile itself'
 	})
@@ -3328,7 +3328,7 @@ function vape:LoadGUI()
 	local targets
 	targets = vape:CreateCategoryList({
 		Name = 'Targets',
-		Icon = getvapeasset('pistonware/assets/new/friends.png'),
+		Icon = getvapeasset('goaware/assets/new/friends.png'),
 		Size = UDim2.fromOffset(17, 16),
 		Placeholder = 'Roblox username',
 		Function = function()
@@ -3418,19 +3418,19 @@ function vape:LoadGUI()
 		Name = 'Reset current profile',
 		Function = function()
 		vape.Save = function() end
-			if isfile('pistonware/profiles/'..vape.Profile..vape.Place..'.txt') and delfile then
-				delfile('pistonware/profiles/'..vape.Profile..vape.Place..'.txt')
+			if isfile('goaware/profiles/'..vape.Profile..vape.Place..'.txt') and delfile then
+				delfile('goaware/profiles/'..vape.Profile..vape.Place..'.txt')
 			end
 	
 			shared.vapereload = true
-			--[[ Back through the pistonware loader, which re-runs the key gate. That is deliberate:
-			shared.PistonwareAuthenticated is cleared and re-derived on every run, so a reinject
+			--[[ Back through the goaware loader, which re-runs the key gate. That is deliberate:
+			shared.GoAwareAuthenticated is cleared and re-derived on every run, so a reinject
 			revalidates rather than inheriting a flag. The developer loader lives on disk under a
 			different name and must never be fetched from GitHub -- it uses the same key gate. ]]
-			if shared.PistonwareDeveloper and isfile('pistonware/loaderdev.lua') then
-				runChunk(readfile('pistonware/loaderdev.lua'), 'loader')
+			if shared.GoAwareDeveloper and isfile('goaware/loaderdev.lua') then
+				runChunk(readfile('goaware/loaderdev.lua'), 'loader')
 			else
-				runChunk(pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/main/loader.lua', true), 'loader')
+				runChunk(goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/loader.lua', true), 'loader')
 			end
 		end,
 		Tooltip = 'This will set your profile to the default settings of Vape'
@@ -3448,14 +3448,14 @@ function vape:LoadGUI()
 		Name = 'Reinject',
 		Function = function()
 			shared.vapereload = true
-			--[[ Back through the pistonware loader, which re-runs the key gate. That is deliberate:
-			shared.PistonwareAuthenticated is cleared and re-derived on every run, so a reinject
+			--[[ Back through the goaware loader, which re-runs the key gate. That is deliberate:
+			shared.GoAwareAuthenticated is cleared and re-derived on every run, so a reinject
 			revalidates rather than inheriting a flag. The developer loader lives on disk under a
 			different name and must never be fetched from GitHub -- it uses the same key gate. ]]
-			if shared.PistonwareDeveloper and isfile('pistonware/loaderdev.lua') then
-				runChunk(readfile('pistonware/loaderdev.lua'), 'loader')
+			if shared.GoAwareDeveloper and isfile('goaware/loaderdev.lua') then
+				runChunk(readfile('goaware/loaderdev.lua'), 'loader')
 			else
-				runChunk(pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/main/loader.lua', true), 'loader')
+				runChunk(goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/loader.lua', true), 'loader')
 			end
 		end,
 		Tooltip = 'Reloads vape for debugging purposes'
@@ -3464,9 +3464,9 @@ function vape:LoadGUI()
 	general:CreateButton({
 		Name = 'Reinstall',
 		Function = function()
-			runChunk(pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/refs/heads/main/reinstall.lua', true), 'reinstall')
+			runChunk(goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/refs/heads/main/reinstall.lua', true), 'reinstall')
 		end,
-		Tooltip = 'Uninjects, deletes the pistonware folder and downloads everything again'
+		Tooltip = 'Uninjects, deletes the goaware folder and downloads everything again'
 	})
 	
 	--[[
@@ -3600,7 +3600,7 @@ function vape:LoadGUI()
 	})
 	
 	vape.HideVapeButton = guipane:CreateToggle({
-		Name = 'Hide Pistonware Mobile Button',
+		Name = 'Hide GoAware Mobile Button',
 		Function = function(callback)
 			--[[ Drops the transparencies rather than flipping Visible. An invisible
 			GuiObject stops hit-testing in Roblox, so hiding the button used to take
@@ -3614,7 +3614,7 @@ function vape:LoadGUI()
 				end
 			end
 		end,
-		Tooltip = 'Makes the Pistonware button invisible on mobile\nIt still opens the GUI when tapped'
+		Tooltip = 'Makes the GoAware button invisible on mobile\nIt still opens the GUI when tapped'
 	})
 	
 	vape.RainbowSpeed = guipane:CreateSlider({
@@ -3776,7 +3776,7 @@ function vape:LoadGUI()
 		
 		TextGUI = vape:CreateOverlay({
 			Name = 'Text GUI',
-			Icon = getvapeasset('pistonware/assets/new/textgui.png'),
+			Icon = getvapeasset('goaware/assets/new/textgui.png'),
 			Size = UDim2.fromOffset(16, 12),
 			Position = UDim2.fromOffset(12, 14),
 			Function = function()
@@ -3969,7 +3969,7 @@ function vape:LoadGUI()
 		Logo.BackgroundColor3 = Color3.new()
 		Logo.BackgroundTransparency = 1
 		Logo.BorderSizePixel = 0
-		Logo.Image = getvapeasset('pistonware/assets/new/vapelogo.png')
+		Logo.Image = getvapeasset('goaware/assets/new/vapelogo.png')
 		Logo.Name = 'Logo'
 		Logo.Position = UDim2.new(1, -142, 0, 3)
 		Logo.Size = UDim2.fromOffset(81, 24)
@@ -3979,7 +3979,7 @@ function vape:LoadGUI()
 		LogoV4.BackgroundColor3 = Color3.new()
 		LogoV4.BackgroundTransparency = 1
 		LogoV4.BorderSizePixel = 0
-		LogoV4.Image = getvapeasset('pistonware/assets/new/v4.png')
+		LogoV4.Image = getvapeasset('goaware/assets/new/v4.png')
 		LogoV4.Name = 'Logo2'
 		LogoV4.Position = UDim2.new(1, -1, 0, 0)
 		LogoV4.Size = UDim2.fromOffset(35, 24)
@@ -4293,7 +4293,7 @@ function vape:LoadGUI()
 		
 		TargetInfoOverlay = vape:CreateOverlay({
 			Name = 'Target Info',
-			Icon = getvapeasset('pistonware/assets/new/targetinfo.png'),
+			Icon = getvapeasset('goaware/assets/new/targetinfo.png'),
 			Size = UDim2.fromOffset(14, 14),
 			Position = UDim2.fromOffset(12, 14),
 			CategorySize = 240,
@@ -4506,8 +4506,8 @@ function vape:LoadGUI()
 				So the name is hidden before it is written, and there is nothing left to
 				fight over. The avatar goes the same way: it is rebuilt from the real UserId
 				on the same frame, and it identifies someone just as well as the text. ]]
-				local hideName = shared.PistonwareHideName
-				local hideThumb = shared.PistonwareHideThumb
+				local hideName = shared.GoAwareHideName
+				local hideThumb = shared.GoAwareHideThumb
 
 				local shown = entity.Player and (DisplayName.Enabled and entity.Player.DisplayName or entity.Player.Name) or entity.Character and entity.Character.Name or Name.Text
 				if type(hideName) == 'function' then
@@ -4812,7 +4812,7 @@ function vape:CanSave()
 	return self.Loaded
 		and not self.Applying
 		and not self.SaveBlocked
-		and not shared.PistonwareBootFailed
+		and not shared.GoAwareBootFailed
 end
 
 function vape:BlockSaving()
@@ -4825,7 +4825,7 @@ function vape:BlockSaving()
 end
 
 function vape:AllowSaving()
-	if shared.PistonwareBootFailed then return self:BlockSaving() end
+	if shared.GoAwareBootFailed then return self:BlockSaving() end
 	self.SaveBlocked = nil
 	if self.PendingProfileCreate and self:CanSave() then
 		self.PendingProfileCreate = nil
@@ -4881,21 +4881,21 @@ function vape:Save(newProfile)
 	if not success then
 		if not self.SaveFailed then
 			self.SaveFailed = true
-			self:CreateNotification('Pistonware', 'Failed to save your config, '..tostring(err), 10, 'alert')
+			self:CreateNotification('GoAware', 'Failed to save your config, '..tostring(err), 10, 'alert')
 		end
 
 		return false
 	end
 
-	local guiSuccess, guiError = writeJson('pistonware/profiles/'..game.GameId..'.gui.txt', guiData)
-	local mainSuccess, mainError = writeJson('pistonware/profiles/'..self.Profile..self.Place..'.txt', mainData)
+	local guiSuccess, guiError = writeJson('goaware/profiles/'..game.GameId..'.gui.txt', guiData)
+	local mainSuccess, mainError = writeJson('goaware/profiles/'..self.Profile..self.Place..'.txt', mainData)
 
 	if guiSuccess and mainSuccess then
 		self.SaveFailed = nil
 		return true
 	elseif not self.SaveFailed then
 		self.SaveFailed = true
-		self:CreateNotification('Pistonware', 'Failed to save your config, '..tostring(guiError or mainError), 10, 'alert')
+		self:CreateNotification('GoAware', 'Failed to save your config, '..tostring(guiError or mainError), 10, 'alert')
 	end
 	return false
 end
@@ -4905,7 +4905,7 @@ function vape:RequestSave()
 		--[[ A toggle made while a normal boot is still loading must survive: queue it so
 		FlushSave writes it the moment main.lua opens saving. A failed boot never writes,
 		so its intent is dropped instead of queued. ]]
-		if not shared.PistonwareBootFailed then
+		if not shared.GoAwareBootFailed then
 			self.SaveNeeded = true
 		end
 		return false
@@ -5204,7 +5204,7 @@ components = {
 		end)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/bind.png')
+		icon.Image = getvapeasset('goaware/assets/new/bind.png')
 		icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		icon.Name = 'Icon'
 		icon.Position = UDim2.new(0.5, -5, 0, 5)
@@ -5227,7 +5227,7 @@ components = {
 			if props.Cover then
 				cover = Instance.new('ImageLabel')
 				cover.BackgroundTransparency = 1
-				cover.Image = getvapeasset('pistonware/assets/new/bindbkg.png')
+				cover.Image = getvapeasset('goaware/assets/new/bindbkg.png')
 				cover.Name = 'Cover'
 				cover.ScaleType = Enum.ScaleType.Slice
 				cover.SliceCenter = Rect.new(0, 0, 141, 40)
@@ -5386,7 +5386,7 @@ components = {
 			self.Keys = table.clone(keys)
 		
 			if mouse then
-				icon.Image = getvapeasset('pistonware/assets/new/edit.png')
+				icon.Image = getvapeasset('goaware/assets/new/edit.png')
 		
 				if cover then
 					coverlabel.Text = #keys <= 0 and 'BIND REMOVED' or 'BOUND TO'
@@ -5441,7 +5441,7 @@ components = {
 		bind.MouseEnter:Connect(function()
 			label.Visible = false
 			icon.Visible = not label.Visible
-			icon.Image = getvapeasset(component.Binding and 'pistonware/assets/new/close.png' or 'pistonware/assets/new/edit.png')
+			icon.Image = getvapeasset(component.Binding and 'goaware/assets/new/close.png' or 'goaware/assets/new/edit.png')
 		
 			if not props.Cover or not api.Enabled then
 				icon.ImageColor3 = color.Dark(uipallet.Text, 0.16)
@@ -5451,7 +5451,7 @@ components = {
 		bind.MouseLeave:Connect(function()
 			label.Visible = #component.Keys > 0
 			icon.Visible = not label.Visible
-			icon.Image = getvapeasset(component.Binding and 'pistonware/assets/new/close.png' or 'pistonware/assets/new/bind.png')
+			icon.Image = getvapeasset(component.Binding and 'goaware/assets/new/close.png' or 'goaware/assets/new/bind.png')
 		
 			if not props.Cover or not api.Enabled then
 				icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
@@ -5500,7 +5500,7 @@ components = {
 			end
 		
 			component.Binding = true
-			icon.Image = getvapeasset('pistonware/assets/new/close.png')
+			icon.Image = getvapeasset('goaware/assets/new/close.png')
 			vape.Binding = component
 		end)
 		
@@ -5616,7 +5616,7 @@ components = {
 		addTooltip(pencilbutton, 'Edit hidden modules')
 		local pencil = Instance.new('ImageLabel')
 		pencil.BackgroundTransparency = 1
-		pencil.Image = getvapeasset('pistonware/assets/new/editlarge.png')
+		pencil.Image = getvapeasset('goaware/assets/new/editlarge.png')
 		pencil.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		pencil.Size = UDim2.fromOffset(12, 12)
 		pencil.Position = UDim2.fromOffset(4, 14)
@@ -5629,7 +5629,7 @@ components = {
 		arrowbutton.Parent = window
 		local arrow = Instance.new('ImageLabel')
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('pistonware/assets/new/downexpand.png')
+		arrow.Image = getvapeasset('goaware/assets/new/downexpand.png')
 		arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		arrow.Size = UDim2.fromOffset(9, 4)
 		arrow.Position = UDim2.fromOffset(9, 18)
@@ -5918,7 +5918,7 @@ components = {
 		arrow.Size = UDim2.fromOffset(9, 4)
 		arrow.Position = UDim2.fromOffset(15, 20)
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('pistonware/assets/new/downexpand.png')
+		arrow.Image = getvapeasset('goaware/assets/new/downexpand.png')
 		arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		arrow.Rotation = 180
 		arrow.Parent = arrowbutton
@@ -5947,7 +5947,7 @@ components = {
 		local settings = Instance.new('ImageButton')
 		settings.AutoButtonColor = false
 		settings.BackgroundTransparency = 1
-		settings.Image = getvapeasset('pistonware/assets/new/settings.png')
+		settings.Image = getvapeasset('goaware/assets/new/settings.png')
 		settings.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		settings.Name = 'Settings'
 		settings.Position = UDim2.new(1, -56, 0, 15)
@@ -6002,7 +6002,7 @@ components = {
 		addvalue.Parent = addbkg
 		local addbutton = Instance.new('ImageButton')
 		addbutton.BackgroundTransparency = 1
-		addbutton.Image = getvapeasset('pistonware/assets/new/add.png')
+		addbutton.Image = getvapeasset('goaware/assets/new/add.png')
 		addbutton.ImageColor3 = props.Color
 		addbutton.ImageTransparency = 0.3
 		addbutton.Position = UDim2.new(1, -26, 0, 8)
@@ -6064,8 +6064,8 @@ components = {
 								if props.Delete then
 									props.Delete(value)
 								end
-							elseif isfile('pistonware/profiles/'..value..vape.Place..'.txt') and delfile then
-								delfile('pistonware/profiles/'..value..vape.Place..'.txt')
+							elseif isfile('goaware/profiles/'..value..vape.Place..'.txt') and delfile then
+								delfile('goaware/profiles/'..value..vape.Place..'.txt')
 							end
 						end
 					else
@@ -6133,7 +6133,7 @@ components = {
 					dotsbutton.Parent = obj
 					local dots = Instance.new('ImageLabel')
 					dots.BackgroundTransparency = 1
-					dots.Image = getvapeasset('pistonware/assets/new/settingdots.png')
+					dots.Image = getvapeasset('goaware/assets/new/settingdots.png')
 					dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 					dots.Name = 'Dots'
 					dots.Position = UDim2.fromOffset(11, 9)
@@ -6228,7 +6228,7 @@ components = {
 					close.AutoButtonColor = false
 					close.BackgroundColor3 = Color3.new(1, 1, 1)
 					close.BackgroundTransparency = 1
-					close.Image = getvapeasset('pistonware/assets/new/closetiny.png')
+					close.Image = getvapeasset('goaware/assets/new/closetiny.png')
 					close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 					close.ImageTransparency = 0.5
 					close.Position = UDim2.new(1, -27, 0, 8)
@@ -6453,7 +6453,7 @@ components = {
 			end
 
 			if swapStyle and not usableProfileName(text) then
-				vape:CreateNotification('Pistonware', #text > 32
+				vape:CreateNotification('GoAware', #text > 32
 					and 'That is too long for a profile name. To bring in an exported profile, paste it into the Import profile box in this window\'s settings instead.'
 					or 'A profile name can only use letters, numbers, spaces, - and _.', 10, 'alert')
 				return
@@ -6715,7 +6715,7 @@ components = {
 		addCorner(knob, UDim.new(1, 0))
 		local preview = Instance.new('ImageButton')
 		preview.BackgroundTransparency = 1
-		preview.Image = getvapeasset('pistonware/assets/new/colorpreview.png')
+		preview.Image = getvapeasset('goaware/assets/new/colorpreview.png')
 		preview.ImageColor3 = Color3.fromHSV(component.Hue, component.Sat, component.Value)
 		preview.ImageTransparency = 1 - component.Opacity
 		preview.Position = UDim2.new(1, -22, 0, 10)
@@ -6729,7 +6729,7 @@ components = {
 		expand.Parent = colorslider
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/downexpandslider.png')
+		icon.Image = getvapeasset('goaware/assets/new/downexpandslider.png')
 		icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		icon.Position = UDim2.fromOffset(4, 4)
 		icon.Size = UDim2.fromOffset(10, 5)
@@ -6742,18 +6742,18 @@ components = {
 		rainbow.Parent = colorslider
 		local ring1 = Instance.new('ImageLabel')
 		ring1.BackgroundTransparency = 1
-		ring1.Image = getvapeasset('pistonware/assets/new/rainbow_1.png')
+		ring1.Image = getvapeasset('goaware/assets/new/rainbow_1.png')
 		ring1.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		ring1.Size = UDim2.fromOffset(12, 12)
 		ring1.Parent = rainbow
 		local ring2 = Instance.fromExisting(ring1)
-		ring2.Image = getvapeasset('pistonware/assets/new/rainbow_2.png')
+		ring2.Image = getvapeasset('goaware/assets/new/rainbow_2.png')
 		ring2.Parent = rainbow
 		local ring3 = Instance.fromExisting(ring1)
-		ring3.Image = getvapeasset('pistonware/assets/new/rainbow_3.png')
+		ring3.Image = getvapeasset('goaware/assets/new/rainbow_3.png')
 		ring3.Parent = rainbow
 		local ring4 = Instance.fromExisting(ring1)
-		ring4.Image = getvapeasset('pistonware/assets/new/rainbow_4.png')
+		ring4.Image = getvapeasset('goaware/assets/new/rainbow_4.png')
 		ring4.Parent = rainbow
 		props.Function = props.Function or function() end
 		
@@ -7046,7 +7046,7 @@ components = {
 		addCorner(button, UDim.new(0, 6))
 		local arrow = Instance.new('ImageLabel')
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('pistonware/assets/new/expandarrow.png')
+		arrow.Image = getvapeasset('goaware/assets/new/expandarrow.png')
 		arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		arrow.Position = UDim2.new(1, -17, 0, 11)
 		arrow.Rotation = 90
@@ -7234,7 +7234,7 @@ components = {
 		addDragHandler(window)
 		local logo = Instance.new('ImageLabel')
 		logo.BackgroundTransparency = 1
-		logo.Image = getvapeasset('pistonware/assets/new/vapelogomini.png')
+		logo.Image = getvapeasset('goaware/assets/new/vapelogomini.png')
 		logo.ImageColor3 = select(3, uipallet.Main:ToHSV()) > 0.5 and uipallet.Text or Color3.new(1, 1, 1)
 		logo.Name = 'VapeLogo'
 		logo.Position = UDim2.fromOffset(12, 11)
@@ -7242,7 +7242,7 @@ components = {
 		logo.Parent = window
 		local v4logo = Instance.new('ImageLabel')
 		v4logo.BackgroundTransparency = 1
-		v4logo.Image = getvapeasset('pistonware/assets/new/v4mini.png')
+		v4logo.Image = getvapeasset('goaware/assets/new/v4mini.png')
 		v4logo.Name = 'V4Logo'
 		v4logo.Position = UDim2.new(1, -1, 0, 0)
 		v4logo.Size = UDim2.fromOffset(23, 16)
@@ -7265,14 +7265,14 @@ components = {
 		addTooltip(settingsbutton, 'Open settings')
 		local settingsicon = Instance.new('ImageLabel')
 		settingsicon.BackgroundTransparency = 1
-		settingsicon.Image = getvapeasset('pistonware/assets/new/settings.png')
+		settingsicon.Image = getvapeasset('goaware/assets/new/settings.png')
 		settingsicon.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		settingsicon.Position = UDim2.fromOffset(15, 12)
 		settingsicon.Size = UDim2.fromOffset(14, 14)
 		settingsicon.Parent = settingsbutton
 		local discord = Instance.new('ImageButton')
 		discord.BackgroundTransparency = 1
-		discord.Image = getvapeasset('pistonware/assets/new/discord.png', true)
+		discord.Image = getvapeasset('goaware/assets/new/discord.png', true)
 		discord.Position = UDim2.new(1, -56, 0, 11)
 		discord.Size = UDim2.fromOffset(16, 16)
 		discord.Parent = window
@@ -7336,15 +7336,15 @@ components = {
 				local body = httpService:JSONEncode({
 					nonce = httpService:GenerateGUID(false),
 					args = {
-						invite = {code = 'pistonware'},
-						code = 'pistonware'
+						invite = {code = 'goaware'},
+						code = 'goaware'
 					},
 					cmd = 'INVITE_BROWSER'
 				})
 				local opened = false
 				for port = 6454, 6467 do
 					local success = pcall(function()
-						return pistonwareRequest({
+						return goawareRequest({
 							Method = 'POST',
 							Url = 'http://127.0.0.1:'..port..'/rpc?v=1',
 							Headers = {
@@ -7361,13 +7361,13 @@ components = {
 					end
 				end
 				if not opened then
-					vape:CreateNotification('Pistonware', 'Discord is not running locally. Use the copied invite link.', 5, 'warning')
+					vape:CreateNotification('GoAware', 'Discord is not running locally. Use the copied invite link.', 5, 'warning')
 				end
 			end)
 
 			task.spawn(function()
 				tooltip.Text = 'Copied!'
-				setclipboard('https://discord.gg/pistonware')
+				setclipboard('https://discord.gg/goaware')
 			end)
 		end)
 		
@@ -7463,7 +7463,7 @@ components = {
 		
 		local arrow = Instance.new('ImageLabel')
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('pistonware/assets/new/expandarrow.png')
+		arrow.Image = getvapeasset('goaware/assets/new/expandarrow.png')
 		arrow.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		arrow.Name = 'Arrow'
 		arrow.Position = UDim2.new(1, -20, 0, 16)
@@ -7702,7 +7702,7 @@ components = {
 		end
 		local preview = Instance.new('ImageButton')
 		preview.BackgroundTransparency = 1
-		preview.Image = getvapeasset('pistonware/assets/new/colorpreview.png')
+		preview.Image = getvapeasset('goaware/assets/new/colorpreview.png')
 		preview.ImageColor3 = Color3.fromHSV(component.Hue, component.Sat, component.Value)
 		preview.Position = UDim2.new(1, -22, 0, 10)
 		preview.Size = UDim2.fromOffset(12, 12)
@@ -7726,7 +7726,7 @@ components = {
 		expand.Parent = slider
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/downexpandslider.png')
+		icon.Image = getvapeasset('goaware/assets/new/downexpandslider.png')
 		icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		icon.Position = UDim2.fromOffset(4, 4)
 		icon.Size = UDim2.fromOffset(10, 5)
@@ -7739,22 +7739,22 @@ components = {
 		rainbow.Parent = slider
 		local ring1 = Instance.new('ImageLabel')
 		ring1.BackgroundTransparency = 1
-		ring1.Image = getvapeasset('pistonware/assets/new/rainbow_1.png')
+		ring1.Image = getvapeasset('goaware/assets/new/rainbow_1.png')
 		ring1.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		ring1.Size = UDim2.fromOffset(12, 12)
 		ring1.Parent = rainbow
 		local ring2 = Instance.fromExisting(ring1)
-		ring2.Image = getvapeasset('pistonware/assets/new/rainbow_2.png')
+		ring2.Image = getvapeasset('goaware/assets/new/rainbow_2.png')
 		ring2.Parent = rainbow
 		local ring3 = Instance.fromExisting(ring1)
-		ring3.Image = getvapeasset('pistonware/assets/new/rainbow_3.png')
+		ring3.Image = getvapeasset('goaware/assets/new/rainbow_3.png')
 		ring3.Parent = rainbow
 		local ring4 = Instance.fromExisting(ring1)
-		ring4.Image = getvapeasset('pistonware/assets/new/rainbow_4.png')
+		ring4.Image = getvapeasset('goaware/assets/new/rainbow_4.png')
 		ring4.Parent = rainbow
 		local knob = Instance.new('ImageLabel')
 		knob.BackgroundTransparency = 1
-		knob.Image = getvapeasset('pistonware/assets/new/theme.png')
+		knob.Image = getvapeasset('goaware/assets/new/theme.png')
 		knob.ImageColor3 = colors[4]
 		knob.Name = 'Knob'
 		knob.Position = UDim2.fromOffset(colorPositions[4] - 3, -5)
@@ -7777,8 +7777,8 @@ components = {
 			ColorSequenceKeypoint.new(1, Color3.fromHSV(component.Hue, component.Sat, 1))
 		}))
 		
-		local normalknob = getvapeasset('pistonware/assets/new/theme.png')
-		local rainbowknob = getvapeasset('pistonware/assets/new/customtheme.png')
+		local normalknob = getvapeasset('goaware/assets/new/theme.png')
+		local rainbowknob = getvapeasset('goaware/assets/new/customtheme.png')
 		local rainbowthread
 		local currentNotch
 		
@@ -8160,7 +8160,7 @@ components = {
 		dotsbutton.Parent = button
 		local dots = Instance.new('ImageLabel')
 		dots.BackgroundTransparency = 1
-		dots.Image = getvapeasset('pistonware/assets/new/overlaydots.png')
+		dots.Image = getvapeasset('goaware/assets/new/overlaydots.png')
 		dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		dots.Name = 'Dots'
 		dots.Position = UDim2.fromOffset(6, 6)
@@ -8200,7 +8200,7 @@ components = {
 		back.Size = UDim2.fromOffset(16, 16)
 		back.Position = UDim2.fromOffset(11, 13)
 		back.BackgroundTransparency = 1
-		back.Image = getvapeasset('pistonware/assets/new/back.png')
+		back.Image = getvapeasset('goaware/assets/new/back.png')
 		back.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		back.Parent = settingspane
 		addCorner(settingspane)
@@ -8469,14 +8469,14 @@ components = {
 		modal.Parent = window
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/legit_mode_icon.png')
+		icon.Image = getvapeasset('goaware/assets/new/legit_mode_icon.png')
 		icon.ImageColor3 = uipallet.Text
 		icon.Position = UDim2.fromOffset(18, 11)
 		icon.Size = UDim2.fromOffset(16, 16)
 		icon.Parent = window
 		local close = Instance.new('ImageButton')
 		close.BackgroundTransparency = 1
-		close.Image = getvapeasset('pistonware/assets/new/min.png')
+		close.Image = getvapeasset('goaware/assets/new/min.png')
 		close.ImageColor3 = color.Light(uipallet.Main, 0.24)
 		close.Position = UDim2.new(1, -31, 0, 11)
 		close.Size = UDim2.fromOffset(16, 16)
@@ -8492,7 +8492,7 @@ components = {
 		stroke.Parent = holder
 		local searchicon = Instance.new('ImageLabel')
 		searchicon.BackgroundTransparency = 1
-		searchicon.Image = getvapeasset('pistonware/assets/new/search.png')
+		searchicon.Image = getvapeasset('goaware/assets/new/search.png')
 		searchicon.ImageColor3 = color.Light(uipallet.Main, 0.42)
 		searchicon.Position = UDim2.new(1, -25, 0, 9)
 		searchicon.Size = UDim2.fromOffset(12, 12)
@@ -8657,7 +8657,7 @@ components = {
 		dotsbutton.Parent = button
 		local dots = Instance.new('ImageLabel')
 		dots.BackgroundTransparency = 1
-		dots.Image = getvapeasset('pistonware/assets/new/settingdots.png')
+		dots.Image = getvapeasset('goaware/assets/new/settingdots.png')
 		dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		dots.Name = 'Dots'
 		dots.Position = UDim2.fromOffset(4, 12)
@@ -9032,7 +9032,7 @@ components = {
 		pin.Position = UDim2.new(1, -37, 0, 14)
 		pin.BackgroundTransparency = 1
 		pin.AutoButtonColor = false
-		pin.Image = getvapeasset('pistonware/assets/new/pin.png')
+		pin.Image = getvapeasset('goaware/assets/new/pin.png')
 		pin.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		pin.Parent = window
 		local dotsbutton = Instance.new('TextButton')
@@ -9044,7 +9044,7 @@ components = {
 		dotsbutton.Parent = window
 		local dots = Instance.new('ImageLabel')
 		dots.BackgroundTransparency = 1
-		dots.Image = getvapeasset('pistonware/assets/new/overlaydots.png')
+		dots.Image = getvapeasset('goaware/assets/new/overlaydots.png')
 		dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		dots.Position = UDim2.fromOffset(5, 15)
 		dots.Size = UDim2.fromOffset(2, 12)
@@ -9224,7 +9224,7 @@ components = {
 		local button = Instance.new('ImageButton')
 		button.AutoButtonColor = false
 		button.BackgroundTransparency = 1
-		button.Image = getvapeasset('pistonware/assets/new/overlays.png')
+		button.Image = getvapeasset('goaware/assets/new/overlays.png')
 		button.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		button.Position = UDim2.new(1, -34, 0, 7)
 		button.Size = UDim2.fromOffset(24, 24)
@@ -9250,7 +9250,7 @@ components = {
 		addCorner(window)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/overlayslarge.png')
+		icon.Image = getvapeasset('goaware/assets/new/overlayslarge.png')
 		icon.ImageColor3 = uipallet.Text
 		icon.Position = UDim2.fromOffset(10, 13)
 		icon.Size = UDim2.fromOffset(14, 12)
@@ -9378,14 +9378,14 @@ components = {
 		addCorner(search)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/search.png')
+		icon.Image = getvapeasset('goaware/assets/new/search.png')
 		icon.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		icon.Position = UDim2.new(1, -25, 0, 11)
 		icon.Size = UDim2.fromOffset(14, 14)
 		icon.Parent = search
 		local legiticon = Instance.new('ImageButton')
 		legiticon.BackgroundTransparency = 1
-		legiticon.Image = getvapeasset('pistonware/assets/new/legit_switch.png')
+		legiticon.Image = getvapeasset('goaware/assets/new/legit_switch.png')
 		legiticon.Name = 'Legit'
 		legiticon.Position = UDim2.fromOffset(8, 11)
 		legiticon.Size = UDim2.fromOffset(29, 16)
@@ -9559,7 +9559,7 @@ components = {
 		local close = addCloseButton(pane, true)
 		local back = Instance.new('ImageButton')
 		back.BackgroundTransparency = 1
-		back.Image = getvapeasset('pistonware/assets/new/backmini.png')
+		back.Image = getvapeasset('goaware/assets/new/backmini.png')
 		back.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		back.Position = UDim2.fromOffset(12, 14)
 		back.Size = UDim2.fromOffset(14, 14)
@@ -9590,7 +9590,7 @@ components = {
 			versionlabel.Name = 'Version'
 			versionlabel.Position = UDim2.new(0, 0, 1, -16)
 			versionlabel.Size = UDim2.new(1, 0, 0, 16)
-			versionlabel.Text = 'Pistonware '..vape.Version..' '
+			versionlabel.Text = 'GoAware '..vape.Version..' '
 			versionlabel.TextColor3 = color.Dark(uipallet.Text, 0.43)
 			versionlabel.TextSize = 10
 			versionlabel.TextXAlignment = Enum.TextXAlignment.Right
@@ -9902,7 +9902,7 @@ components = {
 		addCorner(targetswindow)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/aim.png')
+		icon.Image = getvapeasset('goaware/assets/new/aim.png')
 		icon.Position = UDim2.fromOffset(10, 15)
 		icon.Size = UDim2.fromOffset(18, 12)
 		icon.Parent = targetswindow
@@ -9989,7 +9989,7 @@ components = {
 		
 		component.Players = components.TargetsButton({
 			Position = UDim2.fromOffset(11, 45),
-			Icon = getvapeasset('pistonware/assets/new/players.png'),
+			Icon = getvapeasset('goaware/assets/new/players.png'),
 			IconSize = UDim2.fromOffset(16, 16),
 			IconParent = iconholder,
 			Targets = component,
@@ -9999,7 +9999,7 @@ components = {
 		
 		component.NPCs = components.TargetsButton({
 			Position = UDim2.fromOffset(112, 45),
-			Icon = getvapeasset('pistonware/assets/new/npcs.png'),
+			Icon = getvapeasset('goaware/assets/new/npcs.png'),
 			IconSize = UDim2.fromOffset(12, 16),
 			IconParent = iconholder,
 			Targets = component,
@@ -10305,7 +10305,7 @@ components = {
 		button.Parent = holder
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/allowediconmini.png')
+		icon.Image = getvapeasset('goaware/assets/new/allowediconmini.png')
 		icon.Position = UDim2.fromOffset(10, 14)
 		icon.Size = UDim2.fromOffset(14, 12)
 		icon.Parent = button
@@ -10347,7 +10347,7 @@ components = {
 		addCorner(textlistwindow)
 		local icon = Instance.new('ImageLabel')
 		icon.BackgroundTransparency = 1
-		icon.Image = getvapeasset('pistonware/assets/new/allowedicon.png')
+		icon.Image = getvapeasset('goaware/assets/new/allowedicon.png')
 		icon.Position = UDim2.fromOffset(10, 13)
 		icon.Size = UDim2.fromOffset(19, 16)
 		icon.Parent = textlistwindow
@@ -10389,7 +10389,7 @@ components = {
 		textbox.Parent = boxholder
 		local add = Instance.new('ImageButton')
 		add.BackgroundTransparency = 1
-		add.Image = getvapeasset('pistonware/assets/new/add.png')
+		add.Image = getvapeasset('goaware/assets/new/add.png')
 		add.ImageColor3 = props.Color
 		add.ImageTransparency = 0.3
 		add.Position = UDim2.new(1, -26, 0, 8)
@@ -10473,7 +10473,7 @@ components = {
 				close.AutoButtonColor = false
 				close.BackgroundColor3 = Color3.new(1, 1, 1)
 				close.BackgroundTransparency = 1
-				close.Image = getvapeasset('pistonware/assets/new/closetiny.png')
+				close.Image = getvapeasset('goaware/assets/new/closetiny.png')
 				close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 				close.ImageTransparency = 0.5
 				close.Position = UDim2.new(1, -27, 0, 8)
@@ -10815,7 +10815,7 @@ components = {
 		local knobknob = Instance.new('ImageLabel')
 		knobknob.AnchorPoint = Vector2.new(0.5, 0.5)
 		knobknob.BackgroundTransparency = 1
-		knobknob.Image = getvapeasset('pistonware/assets/new/range.png')
+		knobknob.Image = getvapeasset('goaware/assets/new/range.png')
 		knobknob.ImageColor3 = Color3.fromHSV(vape.GUIColor.Hue, vape.GUIColor.Sat, vape.GUIColor.Value)
 		knobknob.Position = UDim2.fromScale(0.5, 0.5)
 		knobknob.Size = UDim2.fromOffset(9, 16)
@@ -10827,7 +10827,7 @@ components = {
 		knobmaxknob.Rotation = 180
 		local arrow = Instance.new('ImageLabel')
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getvapeasset('pistonware/assets/new/rangeindicator.png')
+		arrow.Image = getvapeasset('goaware/assets/new/rangeindicator.png')
 		arrow.ImageColor3 = color.Light(uipallet.Main, 0.14)
 		arrow.Position = UDim2.new(1, -56, 0, 10)
 		arrow.Size = UDim2.fromOffset(12, 6)

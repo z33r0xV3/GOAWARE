@@ -1,14 +1,14 @@
-local pistonwareBuffer
+local goawareBuffer
 pcall(function()
 	local env = getgenv()
-	pistonwareBuffer = type(env.pistonware) == 'table' and env.pistonware.buffer or nil
+	goawareBuffer = type(env.goaware) == 'table' and env.goaware.buffer or nil
 end)
 
 local function bufferLog(event, message, details)
-	if type(pistonwareBuffer) == 'table' and type(pistonwareBuffer.log) == 'function' then
-		return pistonwareBuffer.log(event, message, details)
+	if type(goawareBuffer) == 'table' and type(goawareBuffer.log) == 'function' then
+		return goawareBuffer.log(event, message, details)
 	end
-	if shared.PistonwareDeveloper == true then print('[pistonware] '..tostring(message)) end
+	if shared.GoAwareDeveloper == true then print('[goaware] '..tostring(message)) end
 end
 
 
@@ -21,21 +21,21 @@ local isfile = isfile or function(file)
 	local suc, res = pcall(function() return readfile(file) end)
 	return suc and res ~= nil and res ~= ''
 end
-local function pistonwareHttpGet(url, nocache, attempt)
-	local adapter = shared.PistonwareDevHttpGet
+local function goawareHttpGet(url, nocache, attempt)
+	local adapter = shared.GoAwareDevHttpGet
 	if type(adapter) == 'function' then
 		return adapter(url, nocache, attempt)
 	end
 	return game:HttpGet(url, nocache)
 end
 local function downloadFile(path, func)
-	local devLoader = shared.PistonwareDevLoadSource
+	local devLoader = shared.GoAwareDevLoadSource
 	if type(devLoader) == 'function' then
 		local body = devLoader(path)
 		return func and func(path) or body
 	end
 	if not isfile(path) then
-		local suc, res = pcall(function() return pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/main/'..select(1, path:gsub('pistonware/', '')), true) end)
+		local suc, res = pcall(function() return goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/'..select(1, path:gsub('goaware/', '')), true) end)
 		if not suc or res == '404: Not Found' then error(res) end
 		if path:find('.lua') then res = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.\n'..res end
 		writefile(path, res)
@@ -64,7 +64,7 @@ local whitelist = vape.Libraries.whitelist
 local prediction = vape.Libraries.prediction
 local targetinfo = vape.Libraries.targetinfo
 local sessioninfo = vape.Libraries.sessioninfo
-local vmChunk = loadstring(downloadFile('pistonware/libraries/vm.lua'), 'vm')
+local vmChunk = loadstring(downloadFile('goaware/libraries/vm.lua'), 'vm')
 if not vmChunk then return end
 local vm = vmChunk()
 

@@ -1,18 +1,18 @@
-local pistonwareBuffer
+local goawareBuffer
 pcall(function()
 	local env = type(getgenv) == 'function' and getgenv() or nil
-	local namespace = type(env) == 'table' and env.pistonware or nil
-	pistonwareBuffer = type(namespace) == 'table' and namespace.buffer or nil
+	local namespace = type(env) == 'table' and env.goaware or nil
+	goawareBuffer = type(namespace) == 'table' and namespace.buffer or nil
 end)
 
 local function bufferCall(method, event, message, details)
-	local callback = type(pistonwareBuffer) == 'table' and pistonwareBuffer[method] or nil
+	local callback = type(goawareBuffer) == 'table' and goawareBuffer[method] or nil
 	if type(callback) == 'function' then return callback(event, message, details) end
-	if shared.PistonwareDeveloper == true then
+	if shared.GoAwareDeveloper == true then
 		if method == 'warn' or method == 'error' then
-			warn('[pistonware] '..tostring(message))
+			warn('[goaware] '..tostring(message))
 		else
-			print('[pistonware] '..tostring(message))
+			print('[goaware] '..tostring(message))
 		end
 	end
 end
@@ -40,12 +40,12 @@ the next server; the developer queued path restores loaderdev.lua first. All pat
 that state before main.lua is reached, so reaching here without it means the gate was skipped.
 Checked before the uninject below, so a failed check cannot tear down a working instance on its
 way out. ]]
-if not shared.PistonwareAuthenticated then
-	bufferWarn('runtime.unauthenticated', 'not authenticated -- run the pistonware loader and enter your key')
+if not shared.GoAwareAuthenticated then
+	bufferWarn('runtime.unauthenticated', 'not authenticated -- run the goaware loader and enter your key')
 	return
 end
 
-local release = type(shared.PistonwareRelease) == 'table' and shared.PistonwareRelease or {
+local release = type(shared.GoAwareRelease) == 'table' and shared.GoAwareRelease or {
 	channel = 'main',
 	branch = 'main',
 	sourceRef = 'main',
@@ -65,7 +65,7 @@ end
 local function reportRuntimeError(stage, err, trace)
 	local traceback = trace or errorTrace(err)
 	bufferError('runtime.'..tostring(stage), err, {stage = stage, traceback = traceback})
-	local reporter = shared.PistonwareTelemetry
+	local reporter = shared.GoAwareTelemetry
 	if type(reporter) == 'table' and type(reporter.report) == 'function' then
 		pcall(function()
 			reporter:report('runtime_error', tostring(err), {
@@ -84,42 +84,42 @@ end
 local function rewriteReleaseUrl(url)
 	local value = tostring(url or '')
 	local ref = releaseRef()
-	local adapter = shared.PistonwareRewriteUrl
+	local adapter = shared.GoAwareRewriteUrl
 	if type(adapter) == 'function' and adapter ~= rewriteReleaseUrl then
 		local ok, rewritten = pcall(adapter, value)
 		if ok and type(rewritten) == 'string' then return rewritten end
 	end
-	value = value:gsub('https://raw%.githubusercontent%.com/themagicpiston/pistonware/refs/heads/main/', function()
-		return 'https://raw.githubusercontent.com/themagicpiston/pistonware/'..ref..'/'
+	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/refs/heads/main/', function()
+		return 'https://raw.githubusercontent.com/z33r0xV3/GOAWARE/'..ref..'/'
 	end)
-	value = value:gsub('https://raw%.githubusercontent%.com/themagicpiston/pistonware/main/', function()
-		return 'https://raw.githubusercontent.com/themagicpiston/pistonware/'..ref..'/'
+	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/main/', function()
+		return 'https://raw.githubusercontent.com/z33r0xV3/GOAWARE/'..ref..'/'
 	end)
-	value = value:gsub('https://raw%.githubusercontent%.com/themagicpiston/pistonware/main/', function()
-		return 'https://raw.githubusercontent.com/themagicpiston/pistonware/'..ref..'/'
+	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/main/', function()
+		return 'https://raw.githubusercontent.com/z33r0xV3/GOAWARE/'..ref..'/'
 	end)
-	value = value:gsub('https://gitlab%.com/pistonware/pistonware/%-/raw/main/', function()
-		return 'https://gitlab.com/pistonware/pistonware/-/raw/'..(release.branch or 'main')..'/'
+	value = value:gsub('https://gitlab%.com/goaware/goaware/%-/raw/main/', function()
+		return 'https://gitlab.com/goaware/goaware/-/raw/'..(release.branch or 'main')..'/'
 	end)
 	value = value:gsub('([?&]sha=)main', '%1'..ref)
 	value = value:gsub('([?&]ref=)main', '%1'..ref)
 	return value
 end
 
-shared.PistonwareRewriteUrl = rewriteReleaseUrl
+shared.GoAwareRewriteUrl = rewriteReleaseUrl
 
 local function projectRawUrl(path, ref)
 	path = tostring(path or ''):gsub('^/', '')
-	return 'https://raw.githubusercontent.com/themagicpiston/pistonware/'..(ref or releaseRef())..'/'..path
+	return 'https://raw.githubusercontent.com/z33r0xV3/GOAWARE/'..(ref or releaseRef())..'/'..path
 end
 
 local function protectedRawUrl(ref)
-	return 'https://gitlab.com/pistonware/pistonware/-/raw/'..(ref or release.branch or 'main')..'/bedwars.lua'
+	return 'https://gitlab.com/goaware/goaware/-/raw/'..(ref or release.branch or 'main')..'/bedwars.lua'
 end
 
-shared.PistonwareRawUrl = projectRawUrl
-shared.PistonwareProtectedRawUrl = protectedRawUrl
-shared.PistonwareChannel = release.channel or 'main'
+shared.GoAwareRawUrl = projectRawUrl
+shared.GoAwareProtectedRawUrl = protectedRawUrl
+shared.GoAwareChannel = release.channel or 'main'
 
 local function cacheAllowed()
 	return release.cacheReady ~= false
@@ -134,7 +134,7 @@ local vape
 local loadstring = function(...)
 	local res, err = loadstring(...)
 	if err and vape then
-		vape:CreateNotification('Pistonware', 'Failed to load : '..err, 30, 'alert')
+		vape:CreateNotification('GoAware', 'Failed to load : '..err, 30, 'alert')
 	end
 	return res
 end
@@ -172,18 +172,18 @@ local cloneref = cloneref or function(obj)
 	return obj
 end
 
-local function pistonwareHttpGet(url, nocache, attempt)
+local function goawareHttpGet(url, nocache, attempt)
 	url = rewriteReleaseUrl(url)
-	local adapter = shared.PistonwareDevHttpGet
+	local adapter = shared.GoAwareDevHttpGet
 	if type(adapter) == 'function' then
 		return adapter(url, nocache, attempt)
 	end
 	return game:HttpGet(url, nocache)
 end
 
-local function pistonwareProtectedHttpGet(url, nocache, attempt)
+local function goawareProtectedHttpGet(url, nocache, attempt)
 	url = rewriteReleaseUrl(url)
-	local adapter = shared.PistonwareDevProtectedHttpGet
+	local adapter = shared.GoAwareDevProtectedHttpGet
 	if type(adapter) == 'function' then
 		return adapter(url, nocache, attempt)
 	end
@@ -202,10 +202,10 @@ end)
 
 	Module counts and load timings are buffered for every build and mirrored into the executor
 	console only in developer mode. Public failures stay in the same buffer and are available
-	through getgenv().pistonware.buffer.dump().
+	through getgenv().goaware.buffer.dump().
 
 Gated at runtime rather than at build time because main.lua is one file serving both builds.
-PUBLIC_BUILD nulls shared.PistonwareDeveloper and locks it behind a metatable, so this is off
+PUBLIC_BUILD nulls shared.GoAwareDeveloper and locks it behind a metatable, so this is off
 for everyone except the developer build by construction -- and the queued teleport script
 carries the flag across, so it stays on for a developer through a match join. ]]
 local function debugWarn(...)
@@ -217,25 +217,25 @@ end
 --[[
 	Breadcrumbs, off unless asked for:
 
-		getgenv().PistonwareTrace = true
+		getgenv().GoAwareTrace = true
 
 	The GUI keeps the same log (vape:Trace writes into this very table) but cannot record
 	anything before it is downloaded and run, and "the client died and there is no log" is
 	exactly the case where that window matters. Root of the filesystem, because reinstall.lua
-	deletes the pistonware folder and would take the evidence with it.
+	deletes the goaware folder and would take the evidence with it.
 ]]
 local traceOn = false
 pcall(function()
-	traceOn = (((getgenv and getgenv().PistonwareTrace) or shared.PistonwareTrace) and true) or false
+	traceOn = (((getgenv and getgenv().GoAwareTrace) or shared.GoAwareTrace) and true) or false
 end)
-shared.PistonwareTraceLines = {}
-local traceLines = shared.PistonwareTraceLines
+shared.GoAwareTraceLines = {}
+local traceLines = shared.GoAwareTraceLines
 local function stage(text)
 	bufferLog('runtime.stage', text)
 	if not traceOn then return end
 	table.insert(traceLines, text)
 	if #traceLines > 200 then table.remove(traceLines, 1) end
-	pcall(writefile, 'pistonware_trace.txt', table.concat(traceLines, '\n'))
+	pcall(writefile, 'goaware_trace.txt', table.concat(traceLines, '\n'))
 end
 local function heapKB()
 	local kb = 0
@@ -264,7 +264,7 @@ if traceOn then
 				os.clock() - started, mem, table.concat(trend, ','))
 			if index then
 				traceLines[index] = text
-				pcall(writefile, 'pistonware_trace.txt', table.concat(traceLines, '\n'))
+				pcall(writefile, 'goaware_trace.txt', table.concat(traceLines, '\n'))
 			else
 				stage(text)
 				index = #traceLines
@@ -304,7 +304,7 @@ local function hasContent(path, chunkName)
 end
 
 local function downloadFile(path, func, chunkName)
-	local devLoader = shared.PistonwareDevLoadSource
+	local devLoader = shared.GoAwareDevLoadSource
 	if type(devLoader) == 'function' then
 		local body = devLoader(path)
 		return func and func(path) or body
@@ -313,7 +313,7 @@ local function downloadFile(path, func, chunkName)
 		--[[ bedwars.lua only exists in the GitLab repo (kept separate/obfuscated there), at that
 		repo's ROOT even though it caches locally under games/; everything else lives in the
 		GitHub repo. ]]
-		local relPath = select(1, path:gsub('pistonware/', ''))
+		local relPath = select(1, path:gsub('goaware/', ''))
 		local isBedwars = relPath == 'games/bedwars.lua'
 		--[[ Retried a few times: raw file hosts intermittently fail, returning an empty body that
 		would otherwise get cached as a corrupt/empty file. ]]
@@ -321,9 +321,9 @@ local function downloadFile(path, func, chunkName)
 		for attempt = 1, 4 do
 			local suc, res = pcall(function()
 				if isBedwars then
-					return pistonwareProtectedHttpGet(protectedRawUrl(), true, attempt)
+					return goawareProtectedHttpGet(protectedRawUrl(), true, attempt)
 				end
-				return pistonwareHttpGet(projectRawUrl(relPath), true, attempt)
+				return goawareHttpGet(projectRawUrl(relPath), true, attempt)
 			end)
 			--[[ For .lua files, compile-check downloads so an outage page is not cached. ]]
 			if suc and res and res ~= '' and res ~= '404: Not Found' and (not path:find('%.lua$') or loadstring(res) ~= nil) then
@@ -356,16 +356,16 @@ local gameScriptFinished = true
 local profileApplied = false
 
 -- shared survives reinjection on several executors, so every new boot owns a fresh state.
-shared.PistonwareBootFailed = nil
-shared.PistonwareBootFailure = nil
+shared.GoAwareBootFailed = nil
+shared.GoAwareBootFailure = nil
 -- vape is only assigned further down, once the GUI library chunk has run; until then there is
 -- nothing to block, and failBoot below re-applies the block once it exists.
 if vape and vape.BlockSaving then vape:BlockSaving() elseif vape then vape.SaveBlocked = true end
 
 local function failBoot(stageName, err)
-	if not shared.PistonwareBootFailed then
-		shared.PistonwareBootFailed = true
-		shared.PistonwareBootFailure = {
+	if not shared.GoAwareBootFailed then
+		shared.GoAwareBootFailed = true
+		shared.GoAwareBootFailure = {
 			stage = tostring(stageName or 'unknown'),
 			error = tostring(err or 'unknown failure')
 		}
@@ -418,18 +418,18 @@ local function finishLoading()
 		bring everything up on defaults, and the Save below would write those defaults
 		back -- deleting the user's real config. Withholding the modules is the intended
 		consequence of a refusal; deleting configs is not, so do neither here. ]]
-		if shared.PistonwareSessionRejected then
+		if shared.GoAwareSessionRejected then
 			failBoot('bedwars.session', 'session was not authorised')
 			bufferWarn('profile.session', 'session was not authorised -- leaving profiles untouched')
 			return
 		end
-		if shared.PistonwareBootFailed then return end
+		if shared.GoAwareBootFailed then return end
 		if not moduleSetComplete then
 			failBoot('modules.timeout', 'the game payload did not signal completion within 120 seconds')
 			bufferWarn('profile.timeout', 'payload completion timed out -- profile loading and saving are blocked for this session')
 			return
 		end
-		debugWarn(('[pistonware] applying profile %s (teleported=%s)'):format(
+		debugWarn(('[goaware] applying profile %s (teleported=%s)'):format(
 			tostring(customProfile or '<saved>'), tostring(shared.vapereload and true or false)))
 		local loadOk, _, canSave = xpcall(function()
 			return vape:Load(nil, customProfile)
@@ -439,7 +439,7 @@ local function finishLoading()
 			bufferWarn('profile.apply', 'profile application failed -- profile saving is blocked for this session')
 			return
 		end
-		debugWarn('[pistonware] profile load returned')
+		debugWarn('[goaware] profile load returned')
 
 		--[[
 			No autosave loop, and nothing timed anywhere in the save path.
@@ -465,7 +465,7 @@ local function finishLoading()
 	There are exactly two ways that finish is observable, and no third:
 	  * an ordinary game script RETURNS, which sets gameScriptFinished
 	  * BedWars pulls in a LuaArmor-protected payload which never returns (the VM keeps the
-	    thread it was invoked on), so bedwars.lua sets shared.PistonwareBedwarsLoaded as its
+	    thread it was invoked on), so bedwars.lua sets shared.GoAwareBedwarsLoaded as its
 	    final statement
 
 	An earlier version tried to infer completion by watching the module count go quiet. It
@@ -485,16 +485,16 @@ local function finishLoading()
 		repeat
 			task.wait(0.1)
 		until gameScriptFinished
-			or shared.PistonwareBedwarsLoaded
+			or shared.GoAwareBedwarsLoaded
 			or os.clock() - started > 120
-		local complete = (gameScriptFinished or shared.PistonwareBedwarsLoaded) and true or false
+		local complete = (gameScriptFinished or shared.GoAwareBedwarsLoaded) and true or false
 		--[[ Same reason as the settle-watcher below: on the timeout path the payload is still
 		inserting, so this must not walk vape.Modules to count them. ]]
 		local count = vape.ModuleCount or 0
-		local how = shared.PistonwareBedwarsLoaded and 'payload signalled'
+		local how = shared.GoAwareBedwarsLoaded and 'payload signalled'
 			or gameScriptFinished and 'game script returned'
 			or 'TIMED OUT after 120s -- re-upload bedwars.lua to LuaArmor so it can signal when it is done'
-		debugWarn(('[pistonware] %d modules in %.1fs (%s) -- applying profile'):format(count, os.clock() - started, how))
+		debugWarn(('[goaware] %d modules in %.1fs (%s) -- applying profile'):format(count, os.clock() - started, how))
 		return complete
 	end
 
@@ -524,38 +524,38 @@ local function finishLoading()
 								local target
 								pcall(function()
 									local env = getgenv()
-									target = type(env.pistonware) == 'table' and env.pistonware.buffer or nil
+									target = type(env.goaware) == 'table' and env.goaware.buffer or nil
 								end)
 								if type(target) == 'table' and type(target.error) == 'function' then
 									target.error(event, message)
-								elseif rawget(shared, 'PistonwareDeveloper') == true then
-									warn('[pistonware] '..tostring(message))
+								elseif rawget(shared, 'GoAwareDeveloper') == true then
+									warn('[goaware] '..tostring(message))
 								end
 							end
 						-- A developer teleport must restore the developer loader first. loaderdev.lua
 						-- installs the local LuaArmor test seam; jumping straight into main.lua loses
 						-- that seam in the new Roblox execution context and the local payload reports
 						-- an authorization failure even though the original boot was valid.
-						if rawget(shared, 'PistonwareDeveloper') == true then
-							-- Each step leaves a line in pistonware_teleport.log: nothing else is
+						if rawget(shared, 'GoAwareDeveloper') == true then
+							-- Each step leaves a line in goaware_teleport.log: nothing else is
 							-- up yet on the new server to report where a queued boot stopped.
 							local function crumb(text)
 								pcall(function()
 									local line = os.date('!%Y-%m-%dT%H:%M:%SZ')..' [main.lua] '..text..'\n'
-									if type(appendfile) == 'function' and isfile('pistonware_teleport.log') then
-										appendfile('pistonware_teleport.log', line)
+									if type(appendfile) == 'function' and isfile('goaware_teleport.log') then
+										appendfile('goaware_teleport.log', line)
 									else
-										writefile('pistonware_teleport.log', line)
+										writefile('goaware_teleport.log', line)
 									end
 								end)
 							end
 							crumb('queued script started in place '..tostring(game.PlaceId))
-							pcall(rawset, shared, 'PistonwareSessionRejected', nil)
-							pcall(rawset, shared, 'PistonwareLoaderBoot', nil)
+							pcall(rawset, shared, 'GoAwareSessionRejected', nil)
+							pcall(rawset, shared, 'GoAwareLoaderBoot', nil)
 							local developerSource
 							pcall(function()
 								if type(readfile) == 'function' then
-									developerSource = readfile('pistonware/loaderdev.lua')
+									developerSource = readfile('goaware/loaderdev.lua')
 								end
 							end)
 							if type(developerSource) == 'string' and developerSource ~= '' then
@@ -565,7 +565,7 @@ local function finishLoading()
 									crumb(ran and 'loaderdev.lua finished' or ('loaderdev.lua errored: '..tostring(runError)))
 									-- A boot that died cannot claim AutoQueueDodge's hold, so let the match in
 									-- now instead of after the three-minute backstop.
-									local hold = shared.PistonwareDodgeHold
+									local hold = shared.GoAwareDodgeHold
 									if not ran and type(hold) == 'table' and not hold.claimed and type(hold.release) == 'function' then
 										pcall(hold.release)
 										crumb('released the AutoQueueDodge hold')
@@ -581,10 +581,10 @@ local function finishLoading()
 								return
 							end
 						end
-						local release = shared.PistonwareRelease
+						local release = shared.GoAwareRelease
 							local ref = type(release) == 'table' and (release.sourceRef or release.branch) or 'main'
 							local ok, source = pcall(function()
-								return game:HttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/'..ref..'/loader.lua', true)
+								return game:HttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/'..ref..'/loader.lua', true)
 							end)
 							if not ok or type(source) ~= 'string' or source == '' or source == '404: Not Found' then
 								queuedError('teleport.loader.download', source)
@@ -597,14 +597,14 @@ local function finishLoading()
 							end
 							return chunk()
 					]]
-			local currentRelease = shared.PistonwareRelease
+			local currentRelease = shared.GoAwareRelease
 			if type(currentRelease) == 'table' then
 				local channel = tostring(currentRelease.channel or 'main')
 				local branch = tostring(currentRelease.branch or channel)
 				local sourceRef = tostring(currentRelease.sourceRef or branch)
 				local version = tostring(currentRelease.version or '')
-				teleportScript = 'shared.PistonwareChannel = '..string.format('%q', channel)..'\n'
-					..'shared.PistonwareRelease = {schema=1, channel='..string.format('%q', channel)
+				teleportScript = 'shared.GoAwareChannel = '..string.format('%q', channel)..'\n'
+					..'shared.GoAwareRelease = {schema=1, channel='..string.format('%q', channel)
 					..', branch='..string.format('%q', branch)
 					..', sourceRef='..string.format('%q', sourceRef)
 					..', version='..string.format('%q', version)
@@ -612,15 +612,15 @@ local function finishLoading()
 			end
 			--[[ Globals and shared do not survive a teleport. Carry only the key candidate; the
 			appropriate loader above must validate it again before main.lua can run. Do not carry
-			PistonwareAuthenticated: that boolean is the one-line gate bypass this path used to
+			GoAwareAuthenticated: that boolean is the one-line gate bypass this path used to
 			publish. %q keeps keys containing a quote or backslash valid Lua. ]]
-			local teleportKey = rawget(shared, 'PistonwareKey')
+			local teleportKey = rawget(shared, 'GoAwareKey')
 			if type(teleportKey) == 'string' and teleportKey ~= '' then
 				local quoted = string.format('%q', teleportKey)
-				teleportScript = 'script_key = '..quoted..'\nrawset(shared, "PistonwareKey", '..quoted..')\n'..teleportScript
+				teleportScript = 'script_key = '..quoted..'\nrawset(shared, "GoAwareKey", '..quoted..')\n'..teleportScript
 			end
-			if rawget(shared, 'PistonwareDeveloper') == true then
-				teleportScript = 'rawset(shared, "PistonwareDeveloper", true)\n'..teleportScript
+			if rawget(shared, 'GoAwareDeveloper') == true then
+				teleportScript = 'rawset(shared, "GoAwareDeveloper", true)\n'..teleportScript
 			end
 			if shared.VapeSmoothBoot then
 				teleportScript = 'shared.VapeSmoothBoot = true\n'..teleportScript
@@ -628,13 +628,13 @@ local function finishLoading()
 			--[[ getgenv() and shared are wiped by a teleport; carry tracing and the optional yield
 			budget into the match. ]]
 			if traceOn then
-				teleportScript = 'shared.PistonwareTrace = true\n'..teleportScript
+				teleportScript = 'shared.GoAwareTrace = true\n'..teleportScript
 			end
 			do
 				local env = (getgenv and getgenv()) or {}
-				local budget = tonumber(env.PistonwareYieldBudget or shared.PistonwareYieldBudget)
+				local budget = tonumber(env.GoAwareYieldBudget or shared.GoAwareYieldBudget)
 				if budget and budget > 0 then
-					teleportScript = 'shared.PistonwareYieldBudget = '..budget..'\n'..teleportScript
+					teleportScript = 'shared.GoAwareYieldBudget = '..budget..'\n'..teleportScript
 				end
 			end
 			-- %q, matching the key above: profile names are user-supplied (the Profiles tab lets
@@ -649,26 +649,26 @@ local function finishLoading()
 			ConnectController.KnitStart sending PlayerConnect, and it runs as soon as Knit starts, long
 			before the loader or anything behind it. So the check lives here: it holds the connect,
 			judges the teams against the settings the module saved, and lets you in when they pass.
-			pistonware loads alongside it, so its notifications report what is happening and the
+			goaware loads alongside it, so its notifications report what is happening and the
 			module's Load in now button can let you in early.
 
 			Only acts in a ranked BedWars match, and only while autoqueuedodge.txt says the module is on. ]]
 			teleportScript = [==[
-local previousHold = shared.PistonwareDodgeHold
+local previousHold = shared.GoAwareDodgeHold
 if game.PlaceId == 6872274481 and not (type(previousHold) == 'table' and previousHold.jobId == game.JobId) then
 	-- Written by the AutoQueueDodge module while it is on, deleted when it is off. No file,
 	-- or a module that is off, means this match loads exactly as it always has.
 	local settings
 	pcall(function()
-		if isfile('pistonware/autoqueuedodge.txt') then
-			settings = game:GetService('HttpService'):JSONDecode(readfile('pistonware/autoqueuedodge.txt'))
+		if isfile('goaware/autoqueuedodge.txt') then
+			settings = game:GetService('HttpService'):JSONDecode(readfile('goaware/autoqueuedodge.txt'))
 		end
 	end)
 	if type(settings) == 'table' and settings.enabled == true then
 		local hold = {state = 'waiting', jobId = game.JobId}
-		shared.PistonwareDodgeHold = hold
+		shared.GoAwareDodgeHold = hold
 
-		-- Pistonware's own notifications. pistonware keeps loading while the match is held,
+		-- GoAware's own notifications. goaware keeps loading while the match is held,
 		-- but its GUI is not up for the first few seconds, so anything said before then waits
 		-- and goes out in order once it is. A vape left in shared by the previous server is
 		-- not ours to use.
@@ -1049,12 +1049,12 @@ end
 			--[[ Tells loaderdev.lua's fallback handler this teleport is already taken care of, so
 			a developer session never queues two boots. ]]
 			if queued and hasQueueOnTeleport then
-				pcall(rawset, shared, 'PistonwareTeleportQueued', true)
+				pcall(rawset, shared, 'GoAwareTeleportQueued', true)
 			end
 
 			if not hasQueueOnTeleport then
 				pcall(function()
-					vape:CreateNotification('Pistonware', 'queue_on_teleport is not supported by your executor -- Vape will not re-inject automatically after this teleport (e.g. queueing into a match). You will need to re-run your loadstring manually.', 15, 'alert')
+					vape:CreateNotification('GoAware', 'queue_on_teleport is not supported by your executor -- Vape will not re-inject automatically after this teleport (e.g. queueing into a match). You will need to re-run your loadstring manually.', 15, 'alert')
 				end)
 			end
 
@@ -1069,9 +1069,9 @@ end
 		end
 	end))
 
-	if shared.PistonwareSyncResult then
-		vape:CreateNotification('Pistonware', shared.PistonwareSyncResult, 15, shared.PistonwareSyncResult:find('failed') and 'alert' or nil)
-		shared.PistonwareSyncResult = nil
+	if shared.GoAwareSyncResult then
+		vape:CreateNotification('GoAware', shared.GoAwareSyncResult, 15, shared.GoAwareSyncResult:find('failed') and 'alert' or nil)
+		shared.GoAwareSyncResult = nil
 	end
 
 	if not shared.vapereload then
@@ -1088,7 +1088,7 @@ end
 			local how = (keys and #keys > 0)
 				and ('Press '..table.concat(keys, ' + '):upper()..' to open GUI')
 				or 'Open the GUI with your keybind'
-			vape:CreateNotification('Pistonware | Finished Loading', how, 5)
+			vape:CreateNotification('GoAware | Finished Loading', how, 5)
 		end)
 	end
 end
@@ -1102,20 +1102,20 @@ end
 		install, not a feature, so the choice is made here instead.
 
 		The asset folder keeps its own separate name: 'new' is the path the GUI itself asks for
-		(pistonware/assets/new/...), and that is unrelated to what the GUI file is called.
+		(goaware/assets/new/...), and that is unrelated to what the GUI file is called.
 	]]
 	local GUI_FILE = 'newgui'
 	local ASSET_FOLDER = 'new'
 
 	--[[ Still written, so anything else reading gui.txt sees something current rather than a
 	stale 'rise'/'old' left over from before those were removed. ]]
-	pcall(function() writefile('pistonware/profiles/gui.txt', GUI_FILE) end)
+	pcall(function() writefile('goaware/profiles/gui.txt', GUI_FILE) end)
 
 	--[[
 		No asset prefetch, and nothing to prefetch for.
 
 		The GUI now resolves every icon it draws to an uploaded rbxassetid and never opens a file
-		under pistonware/assets. This used to download the whole folder -- 105 files, 105 HTTP
+		under goaware/assets. This used to download the whole folder -- 105 files, 105 HTTP
 		requests and 105 disk writes -- on the critical path of the first run, on every platform,
 		and the desktop GUI then read each of those files back twice per icon.
 
@@ -1126,11 +1126,11 @@ end
 
 		The folder is still created, because that lazy fallback writes into it.
 	]]
-	if not isfolder('pistonware/assets/'..ASSET_FOLDER) then
-		makefolder('pistonware/assets/'..ASSET_FOLDER)
+	if not isfolder('goaware/assets/'..ASSET_FOLDER) then
+		makefolder('goaware/assets/'..ASSET_FOLDER)
 	end
 	stage('downloading gui')
-	vape = runChunk(downloadFile('pistonware/guis/'..GUI_FILE..'.lua', nil, 'gui'), 'gui')
+	vape = runChunk(downloadFile('goaware/guis/'..GUI_FILE..'.lua', nil, 'gui'), 'gui')
 	stage('gui chunk returned')
 	if not vape then return end
 	shared.vape = vape
@@ -1156,7 +1156,7 @@ if not shared.VapeIndependent then
 	stage('universal.lua start')
 	do
 		local okUniversal, universalError = xpcall(function()
-			runChunk(downloadFile('pistonware/games/universal.lua', nil, 'universal'), 'universal')
+			runChunk(downloadFile('goaware/games/universal.lua', nil, 'universal'), 'universal')
 		end, errorTrace)
 		if not okUniversal then
 			failBoot('universal.load', universalError)
@@ -1199,11 +1199,11 @@ if not shared.VapeIndependent then
 		--[[ Cleared per run, not just per session: shared survives a reinject, and a leftover true
 		from the previous injection would tell waitForModules the payload had already finished
 		before it had even started re-registering. ]]
-		shared.PistonwareBedwarsLoaded = nil
+		shared.GoAwareBedwarsLoaded = nil
 		--[[ Same reasoning for the refusal flag: bedwars.lua sets it from a fresh verdict every
 		run, but a game script that never sets it at all (the lobby) would otherwise inherit
 		a true left behind by a revoked BedWars session and refuse to save profiles there. ]]
-		shared.PistonwareSessionRejected = nil
+		shared.GoAwareSessionRejected = nil
 
 		--[[ Re-publish the key immediately before the game script runs. LuaArmor blanks the global
 		script_key once it has authenticated, so it is single-use per session and any later
@@ -1216,8 +1216,8 @@ if not shared.VapeIndependent then
 		Written to all three tables because executors disagree on what a loadstring'd chunk's
 		environment is -- on several mobile executors a bare global, getgenv() and _G are
 		genuinely different tables, and the payload only reads one of them. ]]
-		if type(shared.PistonwareKey) == 'string' and shared.PistonwareKey ~= '' then
-			local key = shared.PistonwareKey
+		if type(shared.GoAwareKey) == 'string' and shared.GoAwareKey ~= '' then
+			local key = shared.GoAwareKey
 			script_key = key
 			pcall(function() getgenv().script_key = key end)
 			pcall(function() _G.script_key = key end)
@@ -1230,7 +1230,7 @@ if not shared.VapeIndependent then
 			end, errorTrace)
 			if not ok then
 				failBoot('game.execute', result)
-			elseif type(result) == 'table' and result.PistonwareBootFailure then
+			elseif type(result) == 'table' and result.GoAwareBootFailure then
 				failBoot(result.stage or 'game.execute', result.error or 'game script reported an incomplete boot')
 			end
 			gameScriptFinished = true
@@ -1239,7 +1239,7 @@ if not shared.VapeIndependent then
 			instead of guessed at. ]]
 			local elapsed = os.clock() - started
 			if elapsed > 5 then
-				debugWarn(('[pistonware] %s finished in %.1fs -- its modules now have their saved settings'):format(chunkname, elapsed))
+				debugWarn(('[goaware] %s finished in %.1fs -- its modules now have their saved settings'):format(chunkname, elapsed))
 			end
 			if not ok then
 				reportRuntimeError('game.execute', result, result)
@@ -1248,7 +1248,7 @@ if not shared.VapeIndependent then
 		return true
 	end
 
-	local gamePath = 'pistonware/games/'..game.PlaceId..'.lua'
+	local gamePath = 'goaware/games/'..game.PlaceId..'.lua'
 	--[[ A cached-but-empty file is treated as missing and refetched: a truncated write from an
 	earlier failed download reads back as "present", and loadstring('') silently does
 	nothing -- indistinguishable from the game script never loading at all. ]]
@@ -1257,12 +1257,12 @@ if not shared.VapeIndependent then
 	if cached and cached:gsub('%s', '') ~= '' then
 		gameScriptStarted = runGameScript(cached, tostring(game.PlaceId))
 	end
-	if not gameScriptStarted and not shared.PistonwareDeveloper then
+	if not gameScriptStarted and not shared.GoAwareDeveloper then
 		--[[ Single fetch (the old code requested this URL twice: once to probe, then again
 		inside downloadFile) and load straight from the response, so a stale/corrupt
 		cache file can't shadow what we just downloaded. ]]
 		local suc, res = pcall(function()
-			return pistonwareHttpGet(projectRawUrl('games/'..game.PlaceId..'.lua'), true)
+			return goawareHttpGet(projectRawUrl('games/'..game.PlaceId..'.lua'), true)
 		end)
 		if suc and res and res ~= '' and res ~= '404: Not Found' then
 			pcall(writefile, gamePath, '--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.\n'..res)

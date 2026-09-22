@@ -12,22 +12,22 @@ local isfile = isfile or function(file)
 	end)
 	return suc and res ~= nil and res ~= ''
 end
-local function pistonwareHttpGet(url, nocache, attempt)
-	local adapter = shared.PistonwareDevHttpGet
+local function goawareHttpGet(url, nocache, attempt)
+	local adapter = shared.GoAwareDevHttpGet
 	if type(adapter) == 'function' then
 		return adapter(url, nocache, attempt)
 	end
 	return game:HttpGet(url, nocache)
 end
 local function downloadFile(path, func)
-	local devLoader = shared.PistonwareDevLoadSource
+	local devLoader = shared.GoAwareDevLoadSource
 	if type(devLoader) == 'function' then
 		local body = devLoader(path)
 		return func and func(path) or body
 	end
 	if not isfile(path) then
 		local suc, res = pcall(function()
-			return pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/main/'..select(1, path:gsub('pistonware/', '')), true)
+			return goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/'..select(1, path:gsub('goaware/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			error(res)
@@ -62,7 +62,7 @@ local prediction = vape.Libraries.prediction
 local targetinfo = vape.Libraries.targetinfo
 local sessioninfo = vape.Libraries.sessioninfo
 local getcustomasset = vape.Libraries.getcustomasset
-local drawingChunk = loadstring(downloadFile('pistonware/libraries/drawing.lua'), 'drawing')
+local drawingChunk = loadstring(downloadFile('goaware/libraries/drawing.lua'), 'drawing')
 if not drawingChunk then return end
 local drawingactor = drawingChunk(...)
 if not drawingactor then return end
@@ -81,7 +81,7 @@ if not select(1, ...) and game.PlaceId == 5938036553 then
 
 		task.spawn(function()
 			repeat task.wait() until not shared.vape
-			local executionString = "loadfile('pistonware/main.lua')("..drawingactor..")"
+			local executionString = "loadfile('goaware/main.lua')("..drawingactor..")"
 			for i, v in shared do
 				if type(v) == 'string' then
 					executionString = string.format("shared.%s = '%s'", i, v)..'\n'..executionString
@@ -118,7 +118,7 @@ local function addBlur(parent)
 	blur.Size = UDim2.new(1, 89, 1, 52)
 	blur.Position = UDim2.fromOffset(-48, -31)
 	blur.BackgroundTransparency = 1
-	blur.Image = getcustomasset('pistonware/assets/new/blur.png')
+	blur.Image = getcustomasset('goaware/assets/new/blur.png')
 	blur.ScaleType = Enum.ScaleType.Slice
 	blur.SliceCenter = Rect.new(52, 31, 261, 502)
 	blur.Parent = parent

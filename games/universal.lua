@@ -1,20 +1,20 @@
-local pistonwareBuffer
+local goawareBuffer
 pcall(function()
 	local env = getgenv()
-	pistonwareBuffer = type(env.pistonware) == 'table' and env.pistonware.buffer or nil
+	goawareBuffer = type(env.goaware) == 'table' and env.goaware.buffer or nil
 end)
 
 local function bufferError(event, message, details)
-	if type(pistonwareBuffer) == 'table' and type(pistonwareBuffer.error) == 'function' then
-		return pistonwareBuffer.error(event, message, details)
+	if type(goawareBuffer) == 'table' and type(goawareBuffer.error) == 'function' then
+		return goawareBuffer.error(event, message, details)
 	end
-	if shared.PistonwareDeveloper == true then warn('[pistonware] '..tostring(message)) end
+	if shared.GoAwareDeveloper == true then warn('[goaware] '..tostring(message)) end
 end
 
 local loadstring = function(...)
 	local res, err = loadstring(...)
 	if err and vape then
-		vape:CreateNotification('Pistonware', 'Failed to load : '..err, 30, 'alert')
+		vape:CreateNotification('GoAware', 'Failed to load : '..err, 30, 'alert')
 	end
 	return res
 end
@@ -25,8 +25,8 @@ local isfile = isfile or function(file)
 	return suc and res ~= nil and res ~= ''
 end
 
-local function pistonwareHttpGet(url, nocache, attempt)
-	local adapter = shared.PistonwareDevHttpGet
+local function goawareHttpGet(url, nocache, attempt)
+	local adapter = shared.GoAwareDevHttpGet
 	if type(adapter) == 'function' then
 		return adapter(url, nocache, attempt)
 	end
@@ -44,14 +44,14 @@ local function errorTrace(err)
 end
 
 local function downloadFile(path, func)
-	local devLoader = shared.PistonwareDevLoadSource
+	local devLoader = shared.GoAwareDevLoadSource
 	if type(devLoader) == 'function' then
 		local body = devLoader(path)
 		return func and func(path) or body
 	end
 	if not isfile(path) then
 		local suc, res = pcall(function()
-			return pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/main/'..select(1, path:gsub('pistonware/', '')), true)
+			return goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/'..select(1, path:gsub('goaware/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			error(res)
@@ -150,7 +150,7 @@ local function addBlur(parent)
 	blur.Size = UDim2.new(1, 89, 1, 52)
 	blur.Position = UDim2.fromOffset(-48, -31)
 	blur.BackgroundTransparency = 1
-	blur.Image = getcustomasset('pistonware/assets/new/blur.png')
+	blur.Image = getcustomasset('goaware/assets/new/blur.png')
 	blur.ScaleType = Enum.ScaleType.Slice
 	blur.SliceCenter = Rect.new(52, 31, 261, 502)
 	blur.Parent = parent
@@ -215,7 +215,7 @@ local function isTarget(plr)
 	return targetNames[plr.Name] and true
 end
 
---[[ Is Pistonware's own menu open. newgui publishes it as vape.ClickGuiOpen, a plain
+--[[ Is GoAware's own menu open. newgui publishes it as vape.ClickGuiOpen, a plain
 field: on ThreadFix executors the menu sits under gethui/CoreGui, and reading the
 Instance from a module loop (a thread a profile apply or a GUI click started, without
 the raised identity) throws and takes the loop down with it. The Instance read is only
@@ -315,7 +315,7 @@ local function serverPageKey(pointer, filter)
 end
 
 local function recordServerCache(key, state)
-	local telemetry = shared.PistonwareDevTelemetry
+	local telemetry = shared.GoAwareDevTelemetry
 	if type(telemetry) == 'table' and type(telemetry.cache) == 'function' then
 		telemetry.cache('server-hop/'..key, state)
 	end
@@ -349,7 +349,7 @@ local function getServerPage(pointer, filter)
 	recordServerCache(key, 'miss')
 	local url = 'https://games.roblox.com/v1/games/'..game.PlaceId..'/servers/Public?sortOrder='..(filter == 'Ascending' and 1 or 2)..'&excludeFullGames=true&limit=100'..(pointer and '&cursor='..pointer or '')
 	local requestOk, body = pcall(function()
-		return pistonwareHttpGet(url)
+		return goawareHttpGet(url)
 	end)
 	local parseOk, data = false, nil
 	if requestOk then
@@ -375,7 +375,7 @@ local function serverHop(pointer, filter)
 		table.insert(visited, game.JobId)
 	end
 	if not pointer then
-		notif('Pistonware', 'Searching for an available server.', 2)
+		notif('GoAware', 'Searching for an available server.', 2)
 	end
 
 	local data = getServerPage(pointer, filter)
@@ -384,7 +384,7 @@ local function serverHop(pointer, filter)
 			if tonumber(v.playing) < playersService.MaxPlayers and not table.find(visited, v.id) and not table.find(attempted, v.id) then
 				table.insert(attempted, v.id)
 
-				notif('Pistonware', 'Found! Teleporting.', 5)
+				notif('GoAware', 'Found! Teleporting.', 5)
 				teleportService:TeleportToPlaceInstance(game.PlaceId, v.id)
 				return
 			end
@@ -393,10 +393,10 @@ local function serverHop(pointer, filter)
 		if data.nextPageCursor then
 			serverHop(data.nextPageCursor, filter)
 		else
-			notif('Pistonware', 'Failed to find an available server.', 5, 'warning')
+			notif('GoAware', 'Failed to find an available server.', 5, 'warning')
 		end
 	else
-		notif('Pistonware', 'Failed to grab servers. ('..(data and data.errors[1].message or 'no data')..')', 5, 'warning')
+		notif('GoAware', 'Failed to grab servers. ('..(data and data.errors[1].message or 'no data')..')', 5, 'warning')
 	end
 end
 
@@ -448,9 +448,9 @@ local function loadModule(path, name)
 	return chunk and chunk()
 end
 
-local hash = loadModule('pistonware/libraries/hash.lua', 'hash')
-local prediction = loadModule('pistonware/libraries/prediction.lua', 'prediction')
-entitylib = loadModule('pistonware/libraries/entity.lua', 'entitylibrary')
+local hash = loadModule('goaware/libraries/hash.lua', 'hash')
+local prediction = loadModule('goaware/libraries/prediction.lua', 'prediction')
+entitylib = loadModule('goaware/libraries/entity.lua', 'entitylibrary')
 if not hash or not prediction or not entitylib then return end
 local whitelist = {
 	alreadychecked = {},
@@ -654,7 +654,7 @@ run(function()
 			if self.localprio == 0 then
 				olduninject = vape.Uninject
 				vape.Uninject = function()
-					notif('Pistonware', 'No escaping the private members :)', 10)
+					notif('GoAware', 'No escaping the private members :)', 10)
 				end
 			end
 		end
@@ -781,7 +781,7 @@ run(function()
 		inFlight = false
 	}
 	local function recordWhitelist(state)
-		local telemetry = shared.PistonwareDevTelemetry
+		local telemetry = shared.GoAwareDevTelemetry
 		if type(telemetry) == 'table' and type(telemetry.cache) == 'function' then
 			telemetry.cache('whitelist', state)
 		end
@@ -800,7 +800,7 @@ run(function()
 
 		whitelistRefresh.inFlight = true
 		local suc, textdata = pcall(function()
-			return pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/whitelists/refs/heads/main/PlayerWhitelist.json', true)
+			return goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/whitelists/refs/heads/main/PlayerWhitelist.json', true)
 		end)
 		local parseSuc, res = false, nil
 		if suc and type(textdata) == 'string' and textdata ~= '' then
@@ -819,7 +819,7 @@ run(function()
 		whitelist.textdata = textdata
 		whitelist.loaded = true
 		if forced then
-			whitelist.olddata = isfile('pistonware/profiles/whitelist.json') and readfile('pistonware/profiles/whitelist.json') or nil
+			whitelist.olddata = isfile('goaware/profiles/whitelist.json') and readfile('goaware/profiles/whitelist.json') or nil
 		end
 		local changed = whitelist.textdata ~= whitelist.olddata
 		whitelistRefresh.interval = changed and 30 or math.min(120, math.max(30, whitelistRefresh.interval * 2))
@@ -870,7 +870,7 @@ run(function()
 				end
 				whitelist.olddata = whitelist.textdata
 				pcall(function()
-					writefile('pistonware/profiles/whitelist.json', whitelist.textdata)
+					writefile('goaware/profiles/whitelist.json', whitelist.textdata)
 				end)
 			end
 
@@ -3807,7 +3807,7 @@ run(function()
 		arrow.BackgroundTransparency = 1
 		arrow.BorderSizePixel = 0
 		arrow.Visible = false
-		arrow.Image = getcustomasset('pistonware/assets/new/arrowmodule.png')
+		arrow.Image = getcustomasset('goaware/assets/new/arrowmodule.png')
 		arrow.ImageColor3 = entitylib.getEntityColor(ent) or Color3.fromHSV(Color.Hue, Color.Sat, Color.Value)
 		arrow.Parent = Folder
 		Reference[ent] = arrow
@@ -5589,7 +5589,7 @@ run(function()
 	
 	Radar = vape:CreateOverlay({
 		Name = 'Radar',
-		Icon = getcustomasset('pistonware/assets/new/radaricon.png'),
+		Icon = getcustomasset('goaware/assets/new/radaricon.png'),
 		Size = UDim2.fromOffset(14, 14),
 		Position = UDim2.fromOffset(12, 13),
 		Function = function(callback)
@@ -5851,7 +5851,7 @@ run(function()
 	
 	SessionInfo = vape:CreateOverlay({
 		Name = 'Session Info',
-		Icon = getcustomasset('pistonware/assets/new/textguiicon.png'),
+		Icon = getcustomasset('goaware/assets/new/textguiicon.png'),
 		Size = UDim2.fromOffset(16, 12),
 		Position = UDim2.fromOffset(12, 14),
 		Function = function(callback)
@@ -5937,8 +5937,8 @@ run(function()
 	Hide = SessionInfo:CreateTextList({
 		Name = 'Blacklist',
 		Tooltip = 'Name of entry to hide.',
-		Icon = getcustomasset('pistonware/assets/new/blockedicon.png'),
-		Tab = getcustomasset('pistonware/assets/new/blockedtab.png'),
+		Icon = getcustomasset('goaware/assets/new/blockedicon.png'),
+		Tab = getcustomasset('goaware/assets/new/blockedtab.png'),
 		TabSize = UDim2.fromOffset(21, 16),
 		Color = Color3.fromRGB(250, 50, 56)
 	})
@@ -6033,7 +6033,7 @@ run(function()
 	addBlur(infoholder)
 end)
 
-if shared.PistonwareDeveloper == true then
+if shared.GoAwareDeveloper == true then
 	run(function()
 		local KillauraInfo
 		local FontOption
@@ -6131,7 +6131,7 @@ if shared.PistonwareDeveloper == true then
 		KillauraInfo = vape:CreateOverlay({
 			-- Keep this category name stable so existing developer profiles continue to load.
 			Name = 'Killaura Info',
-			Icon = getcustomasset('pistonware/assets/new/targetinfo.png'),
+			Icon = getcustomasset('goaware/assets/new/targetinfo.png'),
 			Size = UDim2.fromOffset(16, 12),
 			Position = UDim2.fromOffset(12, 110),
 			CategorySize = 240,
@@ -7963,7 +7963,7 @@ run(function()
 				is a descendant of lplr.Character -- never covered it, and No Decals blanked
 				the cape image along with every other ImageLabel in the world. Anything else
 				this script parents into the world can set the same attribute to opt out. ]]
-				part:SetAttribute('PistonwareSelf', true)
+				part:SetAttribute('GoAwareSelf', true)
 				part.Parent = gameCamera
 				local capesurface = Instance.new('SurfaceGui')
 				capesurface.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud

@@ -7,9 +7,9 @@ games/bedwarsFix.lua
 /profiles/
 .DS_Store
 loaderdev.lua
-pistonware_loader.log
-pistonware_loader_telemetry.jsonl
-pistonware_release.json
-pistonware/loader.log
-pistonware/loader_telemetry.jsonl
-pistonware/errors/
+goaware_loader.log
+goaware_loader_telemetry.jsonl
+goaware_release.json
+goaware/loader.log
+goaware/loader_telemetry.jsonl
+goaware/errors/

@@ -319,7 +319,7 @@ end
 expectSourceContains('loader.lua', '/branches/')
 expectSourceContains('loader.lua', "release.sourceRef or release.branch")
 expectSourceContains('loader.lua', 'namespace.buffer = buffer')
-expectSourceContains('loader.lua', "local dumpPath = 'pistonware/errors/'")
+expectSourceContains('loader.lua', "local dumpPath = 'goaware/errors/'")
 expectSourceContains('loader.lua', 'function buffer.dump(reason)')
 expectSourceContains('loader.lua', 'function buffer.guard(stage, fatal, callback, ...)')
 expect(not sources['loader.lua']:find('pcall(print, line)', 1, true), 'loader.lua still prints logger lines directly')
@@ -327,10 +327,10 @@ expect(not sources['loader.lua']:find('pcall(warn, line)', 1, true), 'loader.lua
 expectSourceContains('loader.lua', "local unsupported = {'xeno', 'solara'}")
 
 do
-	local startAt = assert(sources['loader.lua']:find('local function installPistonwareBuffer', 1, true))
-	local endAt = assert(sources['loader.lua']:find('\nlocal pistonwareBuffer, markPistonwareBufferFilesystemReady', startAt, true))
+	local startAt = assert(sources['loader.lua']:find('local function installGoAwareBuffer', 1, true))
+	local endAt = assert(sources['loader.lua']:find('\nlocal goawareBuffer, markGoAwareBufferFilesystemReady', startAt, true))
 	local installerChunk = assert(loadstring(
-		sources['loader.lua']:sub(startAt, endAt - 1)..'\nreturn installPistonwareBuffer',
+		sources['loader.lua']:sub(startAt, endAt - 1)..'\nreturn installGoAwareBuffer',
 		'buffer-installer'
 	))
 	pcall(setfenv, installerChunk, getfenv())
@@ -339,7 +339,7 @@ do
 	local originalGetgenv, originalIsfolder = getgenv, isfolder
 	local originalMakefolder, originalWritefile = makefolder, writefile
 	local consoleLines, files = {}, {}
-	local folders = {pistonware = true}
+	local folders = {goaware = true}
 	print = function(message) consoleLines[#consoleLines + 1] = 'print:'..tostring(message) end
 	warn = function(message) consoleLines[#consoleLines + 1] = 'warn:'..tostring(message) end
 	local publicEnv = {}
@@ -349,7 +349,7 @@ do
 	writefile = function(path, contents) files[path] = contents end
 
 	local publicBuffer = installBuffer(false)
-	expect(type(publicEnv.pistonware) == 'table' and publicEnv.pistonware.buffer == publicBuffer, 'buffer was not published through getgenv().pistonware')
+	expect(type(publicEnv.goaware) == 'table' and publicEnv.goaware.buffer == publicBuffer, 'buffer was not published through getgenv().goaware')
 	publicBuffer.log('test.log', 'public info')
 	publicBuffer.print('test.print', 'public print')
 	publicBuffer.warn('test.warn', 'public warning')
@@ -357,7 +357,7 @@ do
 	expect(#consoleLines == 0, 'public buffer wrote to the executor console')
 	local dumped, dumpPath, entryCount = publicBuffer.dump('smoke')
 	expect(dumped and type(files[dumpPath]) == 'string', 'public buffer did not write its dump')
-	expect(dumpPath:find('pistonware/errors/', 1, true) == 1, 'buffer dump used the wrong folder')
+	expect(dumpPath:find('goaware/errors/', 1, true) == 1, 'buffer dump used the wrong folder')
 	expect(entryCount == 4, 'buffer dump reported the wrong entry count')
 	expect(not files[dumpPath]:find('secret', 1, true), 'buffer dump did not redact a key')
 	for index = 1, 520 do publicBuffer.log('test.capacity', index) end
@@ -381,7 +381,7 @@ do
 end
 expectSourceContains('games/universal.lua', "local SpeedMethodList = {'Velocity'}")
 expectSourceContains('games/universal.lua', 'List = SpeedMethodList')
-expectSourceContains('games/universal.lua', 'if shared.PistonwareDeveloper == true then')
+expectSourceContains('games/universal.lua', 'if shared.GoAwareDeveloper == true then')
 expectSourceContains('games/universal.lua', "Name = 'Killaura Info'")
 expectSourceContains('games/universal.lua', "<b>Developer Diagnostics</b>")
 expectSourceContains('games/universal.lua', 'performance:StartDiagnostics()')
@@ -396,16 +396,16 @@ expectSourceContains('guis/newgui.lua', 'function vape:BlockSaving()')
 expectSourceContains('guis/newgui.lua', 'function vape:AllowSaving()')
 expectSourceContains('guis/newgui.lua', 'self.PendingProfileCreate = canSave and true or nil')
 expectSourceContains('games/6872274481.lua', "bootFailure('bedwars.local.compile'")
-expectSourceContains('games/6872274481.lua', 'PistonwareBootFailure = true')
+expectSourceContains('games/6872274481.lua', 'GoAwareBootFailure = true')
 expectSourceContains('games/6872274481.lua', "bootFailure('bedwars.payload.execute'")
 expect(not sources['games/6872274481.lua']:find('no usable local games/bedwars.lua -- using the published build', 1, true), '6872274481.lua still falls back after an invalid local payload')
-expect(not sources['main.lua']:find('rawset(shared, "PistonwareAuthenticated", true)', 1, true), 'main.lua still carries an unauthenticated teleport gate')
+expect(not sources['main.lua']:find('rawset(shared, "GoAwareAuthenticated", true)', 1, true), 'main.lua still carries an unauthenticated teleport gate')
 expectSourceContains('games/8444591321.lua', 'return runChunk')
 expectSourceContains('games/8560631822.lua', 'return runChunk')
 
 resetRoblox()
 shared.vape = {}
-shared.PistonwareDeveloper = true
+shared.GoAwareDeveloper = true
 execute('games/12011959048.lua')
 expectWarnings('games/12011959048.lua', 0)
 expect(shared.vape.Place == 11630038968, 'bridge-duel wrapper did not initialise its place')

@@ -1,17 +1,17 @@
-local pistonwareBuffer
+local goawareBuffer
 pcall(function()
 	local env = getgenv()
-	pistonwareBuffer = type(env.pistonware) == 'table' and env.pistonware.buffer or nil
+	goawareBuffer = type(env.goaware) == 'table' and env.goaware.buffer or nil
 end)
 
 local function bufferCall(method, event, message, details)
-	local callback = type(pistonwareBuffer) == 'table' and pistonwareBuffer[method] or nil
+	local callback = type(goawareBuffer) == 'table' and goawareBuffer[method] or nil
 	if type(callback) == 'function' then return callback(event, message, details) end
-	if shared.PistonwareDeveloper == true then warn('[pistonware] '..tostring(message)) end
+	if shared.GoAwareDeveloper == true then warn('[goaware] '..tostring(message)) end
 end
 
-if not shared.PistonwareAuthenticated then
-	bufferCall('warn', 'lobby.unauthenticated', 'not authenticated -- run the pistonware loader and enter your key')
+if not shared.GoAwareAuthenticated then
+	bufferCall('warn', 'lobby.unauthenticated', 'not authenticated -- run the goaware loader and enter your key')
 	return
 end
 
@@ -224,7 +224,7 @@ run(function()
 				until not AutoGamble.Enabled
 			end
 		end,
-		Tooltip = 'Automatically opens lucky crates, piston inspired!'
+		Tooltip = 'Automatically opens lucky crates, goaware inspired!'
 	})
 end)
 run(function()
@@ -479,7 +479,7 @@ run(function()
 		stopEmote()
 
 		if not entitylib.isAlive then
-			notif('Pistonware', 'You have to be alive to play an emote.', 3)
+			notif('GoAware', 'You have to be alive to play an emote.', 3)
 			return
 		end
 
@@ -492,7 +492,7 @@ run(function()
 		template = template and template:FindFirstChild('Effects')
 		template = template and template:FindFirstChild('NightmareEmote')
 		if not template then
-			notif('Pistonware', 'This place has no NightmareEmote effect to play.', 5)
+			notif('GoAware', 'This place has no NightmareEmote effect to play.', 5)
 			return
 		end
 
@@ -514,7 +514,7 @@ run(function()
 		stopEmote never gets to run. ]]
 		pcall(function()
 			sound = Instance.new('Sound')
-			sound.Name = 'PistonwareNightmareEmote'
+			sound.Name = 'GoAwareNightmareEmote'
 			sound.SoundId = 'rbxassetid://9188182911'
 			sound.Looped = true
 			sound.Volume = 0.5

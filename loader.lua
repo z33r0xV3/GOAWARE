@@ -1,6 +1,6 @@
 local PUBLIC_BUILD = true
 
-local function installPistonwareBuffer(developerMode)
+local function installGoAwareBuffer(developerMode)
 	local nativePrint, nativeWarn, nativeError = print, warn, error
 	local capacity = 512
 	local entries = {}
@@ -10,7 +10,7 @@ local function installPistonwareBuffer(developerMode)
 	local buffer = {}
 
 	pcall(function()
-		filesystemReady = type(isfolder) == 'function' and isfolder('pistonware') and true or false
+		filesystemReady = type(isfolder) == 'function' and isfolder('goaware') and true or false
 	end)
 
 	local function timestamp(pathSafe)
@@ -27,7 +27,7 @@ local function installPistonwareBuffer(developerMode)
 		if type(guid) == 'string' and guid ~= '' then session = guid end
 	end)
 	local sessionFile = session:gsub('[^%w%-]', ''):sub(1, 16)
-	local dumpPath = 'pistonware/errors/'..timestamp(true)..'-'..sessionFile..'.txt'
+	local dumpPath = 'goaware/errors/'..timestamp(true)..'-'..sessionFile..'.txt'
 
 	local function safeText(value, limit)
 		local text = tostring(value or '')
@@ -57,7 +57,7 @@ local function installPistonwareBuffer(developerMode)
 			table.insert(parts, tostring(key)..'='..tostring(value))
 		end
 		table.sort(parts)
-		local line = ('[%s] [pistonware] [%s] [%s] %s'):format(
+		local line = ('[%s] [goaware] [%s] [%s] %s'):format(
 			entry.timestamp,
 			entry.level:upper(),
 			entry.event,
@@ -176,18 +176,18 @@ local function installPistonwareBuffer(developerMode)
 		if dumping then return false, 'a buffer dump is already running', count end
 		if not filesystemReady then
 			pendingDump = true
-			return false, 'the pistonware filesystem is not ready', count
+			return false, 'the goaware filesystem is not ready', count
 		end
 		if type(writefile) ~= 'function' then return false, 'writefile is unavailable', count end
 		pendingDump = false
 		dumping = true
 		local ok, result = pcall(function()
 			if type(isfolder) == 'function' and type(makefolder) == 'function' then
-				if not isfolder('pistonware/errors') then makefolder('pistonware/errors') end
+				if not isfolder('goaware/errors') then makefolder('goaware/errors') end
 			end
-			local release = type(shared.PistonwareRelease) == 'table' and shared.PistonwareRelease or {}
+			local release = type(shared.GoAwareRelease) == 'table' and shared.GoAwareRelease or {}
 			local lines = {
-				'Pistonware error buffer',
+				'GoAware error buffer',
 				'session='..session,
 				'dumped='..timestamp(false),
 				'reason='..safeText(reason or 'manual', 240),
@@ -221,10 +221,10 @@ local function installPistonwareBuffer(developerMode)
 	pcall(function()
 		local env = type(getgenv) == 'function' and getgenv() or nil
 		if type(env) ~= 'table' then return end
-		local namespace = env.pistonware
+		local namespace = env.goaware
 		if type(namespace) ~= 'table' then
 			namespace = {}
-			env.pistonware = namespace
+			env.goaware = namespace
 		end
 		namespace.buffer = buffer
 	end)
@@ -232,7 +232,7 @@ local function installPistonwareBuffer(developerMode)
 	return buffer, markFilesystemReady
 end
 
-local pistonwareBuffer, markPistonwareBufferFilesystemReady = installPistonwareBuffer(false)
+local goawareBuffer, markGoAwareBufferFilesystemReady = installGoAwareBuffer(false)
 
 local VERSION_SCHEMA = 1
 local CHANNELS = {
@@ -257,7 +257,7 @@ local function configuredValue(name)
 	return value
 end
 
-local requestedChannel = configuredValue('PistonwareChannel')
+local requestedChannel = configuredValue('GoAwareChannel')
 if type(requestedChannel) ~= 'string' then
 	requestedChannel = 'main'
 end
@@ -341,10 +341,10 @@ local function timestamp()
 end
 
 local loaderSession = sessionId()
-local logFiles = {'pistonware_loader.log'}
-local logFileSet = {['pistonware_loader.log'] = true}
-local telemetryFiles = {'pistonware_loader_telemetry.jsonl'}
-local telemetryFileSet = {['pistonware_loader_telemetry.jsonl'] = true}
+local logFiles = {'goaware_loader.log'}
+local logFileSet = {['goaware_loader.log'] = true}
+local telemetryFiles = {'goaware_loader_telemetry.jsonl'}
+local telemetryFileSet = {['goaware_loader_telemetry.jsonl'] = true}
 
 local function addFile(files, seen, path)
 	if type(path) ~= 'string' or path == '' or seen[path] then return end
@@ -355,7 +355,7 @@ end
 --[[ Whether the boot log is echoed into the executor output, read HERE -- at the top, before
 the public build clears the flag further down -- so that setting
 
-    shared.PistonwareDeveloper = true
+    shared.GoAwareDeveloper = true
 
 in front of the loadstring turns the log on for the whole run. Captured once rather than read
 per line precisely because of that clear: read live, only the loader.start line above the
@@ -366,7 +366,7 @@ computed after it, so developer mode itself stays shut in a public build -- this
 visibility of the loader's own log lines and nothing more. The lines are safe to show (safeText
 redacts anything key-shaped), they are just noise: a wall of INFO during a boot that went fine
 reads to an end user like something is broken. ]]
-local logToConsole = shared.PistonwareDeveloper and true or false
+local logToConsole = shared.GoAwareDeveloper and true or false
 
 local Logger = {}
 Logger.__index = Logger
@@ -392,7 +392,7 @@ function Logger:emit(level, event, message, details)
 		end
 		table.sort(parts)
 	end
-	local line = ('[%s] [pistonware] [%s] [%s] %s'):format(timestamp(), level:upper(), event, safeText(message, 1200))
+	local line = ('[%s] [goaware] [%s] [%s] %s'):format(timestamp(), level:upper(), event, safeText(message, 1200))
 	if #parts > 0 then line = line..' '..table.concat(parts, ' ') end
 	self.lastLine = line
 	for _, path in ipairs(logFiles) do
@@ -402,11 +402,11 @@ function Logger:emit(level, event, message, details)
 		pcall(function() self.console:SetLine(line) end)
 	end
 	if level == 'error' then
-		pistonwareBuffer.error(event, message, details)
+		goawareBuffer.error(event, message, details)
 	elseif level == 'warn' then
-		pistonwareBuffer.warn(event, message, details)
+		goawareBuffer.warn(event, message, details)
 	else
-		pistonwareBuffer.log(event, message, details)
+		goawareBuffer.log(event, message, details)
 	end
 	return line
 end
@@ -476,7 +476,7 @@ function Telemetry:report(event, message, details)
 end
 
 local telemetry = setmetatable({}, Telemetry)
-local configuredTelemetryEndpoint = configuredValue('PistonwareTelemetryEndpoint') or configuredValue('PistonwareTelemetryUrl')
+local configuredTelemetryEndpoint = configuredValue('GoAwareTelemetryEndpoint') or configuredValue('GoAwareTelemetryUrl')
 if type(configuredTelemetryEndpoint) == 'string' and configuredTelemetryEndpoint:match('^https://') then
 	telemetry.endpoint = configuredTelemetryEndpoint
 end
@@ -511,7 +511,7 @@ local function stopExecution(console, stage, err, trace, display)
 	if loaderStopped then return false end
 	loaderStopped = true
 	local message = reportError(stage, err, trace, true)
-	shared.PistonwareLoaderBoot = nil
+	shared.GoAwareLoaderBoot = nil
 	shared.vapereload = nil
 	if console then
 		pcall(function() console:Fail(display or ('Loader stopped: '..message)) end)
@@ -540,23 +540,23 @@ if invalidChannel then
 end
 
 if PUBLIC_BUILD then
-	shared.PistonwareDeveloper = nil
+	shared.GoAwareDeveloper = nil
 	pcall(function()
 		if getmetatable(shared) ~= nil then return end
 		setmetatable(shared, {
 			__index = function(self, key)
-				if key == 'PistonwareDeveloper' then return nil end
+				if key == 'GoAwareDeveloper' then return nil end
 				return rawget(self, key)
 			end,
 			__newindex = function(self, key, value)
-				if key == 'PistonwareDeveloper' then return end
+				if key == 'GoAwareDeveloper' then return end
 				rawset(self, key, value)
 			end
 		})
 	end)
 end
 
-local isDeveloper = (not PUBLIC_BUILD) and shared.PistonwareDeveloper and true or false
+local isDeveloper = (not PUBLIC_BUILD) and shared.GoAwareDeveloper and true or false
 
 --[[ Developer-only boot timing. The console shows ONE line -- 'Injecting into ROBLOX...' -- from
 the moment the key validates until main.lua starts, and the status chip reads INJECTING right
@@ -569,7 +569,7 @@ local function phase(name)
 	local now = os.clock()
 	local elapsed = now - phaseClock
 	logger:info('boot.phase', name..' completed', {seconds = ('%.2f'):format(elapsed)})
-	if isDeveloper then pistonwareBuffer.print('boot.phase', name..' completed', {seconds = ('%.2f'):format(elapsed)}) end
+	if isDeveloper then goawareBuffer.print('boot.phase', name..' completed', {seconds = ('%.2f'):format(elapsed)}) end
 	phaseClock = now
 end
 
@@ -582,14 +582,14 @@ to open, which is the worst possible thing to happen to someone whose key just l
 A second run is allowed to take that one over instead: createConsole tears the old window down,
 the old AskKey sees `closed` and returns nil, and the boot behind it unwinds without touching
 the new one's flags (releaseBoot only clears what it still owns). ]]
-if shared.PistonwareLoaderBoot and not shared.PistonwareKeyPrompt and os.clock() - shared.PistonwareLoaderBoot < 180 then
+if shared.GoAwareLoaderBoot and not shared.GoAwareKeyPrompt and os.clock() - shared.GoAwareLoaderBoot < 180 then
 	logger:warn('loader.duplicate', 'loader is already running; ignoring duplicate execution')
 	return
 end
-shared.PistonwareLoaderBoot = os.clock()
+shared.GoAwareLoaderBoot = os.clock()
 --[[ Identifies THIS boot in the session-wide shared table, so a run that has been taken over can
 tell that the flags it is about to clear now belong to somebody else. ]]
-local bootStamp = shared.PistonwareLoaderBoot
+local bootStamp = shared.GoAwareLoaderBoot
 
 local isfile = isfile or function(file)
 	local suc, res = pcall(function()
@@ -613,11 +613,11 @@ local SCRIPT_ID   = '2fb6964a070d89a7650354a0dcce302c'
 is what issues the key; the provider only decides whose checkpoints you sit through getting
 there -- so adding another is a URL here and an entry in the links list at the gate, nothing
 else. ]]
-local LOOTLABS_URL = 'https://ads.luarmor.net/get_key?for=Pistonware_Key-xnpnovpEljPO'
-local WORKINK_URL = 'https://ads.luarmor.net/get_key?for=Pistonware_Workink-cjPVCqOPPBCJ'
-local KEY_FILE    = 'pistonwarekey.json'
-local RELEASE_FILE = 'pistonware_release.json'
-local HELP_URL    = 'https://discord.gg/pistonware'
+local LOOTLABS_URL = 'https://ads.luarmor.net/get_key?for=GoAware_Key-xnpnovpEljPO'
+local WORKINK_URL = 'https://ads.luarmor.net/get_key?for=GoAware_Workink-cjPVCqOPPBCJ'
+local KEY_FILE    = 'goawarekey.json'
+local RELEASE_FILE = 'goaware_release.json'
+local HELP_URL    = 'https://discord.gg/goaware'
 --[[ ======================================================================== ]]
 
 local function sourceRef(ref)
@@ -626,37 +626,37 @@ end
 
 local function projectRawUrl(path, ref)
 	path = tostring(path or ''):gsub('^/', '')
-	return 'https://raw.githubusercontent.com/themagicpiston/pistonware/'..sourceRef(ref)..'/'..path
+	return 'https://raw.githubusercontent.com/z33r0xV3/GOAWARE/'..sourceRef(ref)..'/'..path
 end
 
 local function protectedRawUrl(ref)
-	return 'https://gitlab.com/pistonware/pistonware/-/raw/'..(ref or release.branch)..'/bedwars.lua'
+	return 'https://gitlab.com/goaware/goaware/-/raw/'..(ref or release.branch)..'/bedwars.lua'
 end
 
 local function rewriteProjectUrl(url)
 	local value = tostring(url or '')
 	local ref = sourceRef()
-	value = value:gsub('https://raw%.githubusercontent%.com/themagicpiston/pistonware/refs/heads/main/', function() return projectRawUrl('', ref) end)
-	value = value:gsub('https://raw%.githubusercontent%.com/themagicpiston/pistonware/main/', function() return projectRawUrl('', ref) end)
-	value = value:gsub('https://raw%.githubusercontent%.com/themagicpiston/pistonware/main/', function() return projectRawUrl('', ref) end)
-	value = value:gsub('https://gitlab%.com/pistonware/pistonware/%-/raw/main/', function() return protectedRawUrl(release.branch):gsub('/bedwars%.lua$', '/') end)
+	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/refs/heads/main/', function() return projectRawUrl('', ref) end)
+	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/main/', function() return projectRawUrl('', ref) end)
+	value = value:gsub('https://raw%.githubusercontent%.com/z33r0xV3/GOAWARE/main/', function() return projectRawUrl('', ref) end)
+	value = value:gsub('https://gitlab%.com/goaware/goaware/%-/raw/main/', function() return protectedRawUrl(release.branch):gsub('/bedwars%.lua$', '/') end)
 	value = value:gsub('(/git/trees/)main', '%1'..release.branch)
 	value = value:gsub('([?&]sha=)main', '%1'..ref)
 	value = value:gsub('([?&]ref=)main', '%1'..ref)
 	return value
 end
 
-shared.PistonwareRawUrl = projectRawUrl
-shared.PistonwareProtectedRawUrl = protectedRawUrl
-shared.PistonwareRewriteUrl = rewriteProjectUrl
-shared.PistonwareRelease = release
-shared.PistonwareTelemetry = telemetry
-shared.PistonwareChannel = release.channel
+shared.GoAwareRawUrl = projectRawUrl
+shared.GoAwareProtectedRawUrl = protectedRawUrl
+shared.GoAwareRewriteUrl = rewriteProjectUrl
+shared.GoAwareRelease = release
+shared.GoAwareTelemetry = telemetry
+shared.GoAwareChannel = release.channel
 if not isDeveloper then
-	shared.PistonwareDevHttpGet = function(url, nocache)
+	shared.GoAwareDevHttpGet = function(url, nocache)
 		return game:HttpGet(rewriteProjectUrl(url), nocache)
 	end
-	shared.PistonwareDevProtectedHttpGet = function(url, nocache)
+	shared.GoAwareDevProtectedHttpGet = function(url, nocache)
 		return game:HttpGet(rewriteProjectUrl(url), nocache)
 	end
 end
@@ -755,9 +755,9 @@ local function rememberExpiry(status)
 	local data = type(status) == 'table' and type(status.data) == 'table' and status.data or nil
 	local expire = data and tonumber(data.auth_expire)
 	if expire == -1 or expire == 0 then
-		shared.PistonwareKeyExpire = -1
+		shared.GoAwareKeyExpire = -1
 	elseif expire then
-		shared.PistonwareKeyExpire = expire
+		shared.GoAwareKeyExpire = expire
 	end
 end
 
@@ -785,7 +785,7 @@ end
 
 local function downloadFile(path, func)
 	if not (release.cacheReady and hasContent(path)) then
-		local relPath = select(1, path:gsub('pistonware/', ''))
+		local relPath = select(1, path:gsub('goaware/', ''))
 		local isBedwars = relPath == 'games/bedwars.lua'
 		local content
 		for attempt = 1, 4 do
@@ -821,7 +821,7 @@ local function downloadFile(path, func)
 end
 
 if not isDeveloper then
-	shared.PistonwareDevLoadSource = function(path)
+	shared.GoAwareDevLoadSource = function(path)
 		return downloadFile(path)
 	end
 end
@@ -869,7 +869,7 @@ Both 'Loader stopped' reports came out of this lookup:
 
 So the executor's request function goes first, with a User-Agent, and the status code is read
 rather than guessed from the body. HttpGet stays as the fallback for executors without one. ]]
-local GITHUB_HEADERS = {['User-Agent'] = 'pistonware-loader', Accept = 'application/vnd.github+json'}
+local GITHUB_HEADERS = {['User-Agent'] = 'goaware-loader', Accept = 'application/vnd.github+json'}
 
 local function describeGithubFailure(status, body)
 	local detail
@@ -940,12 +940,12 @@ local function fetchRepoTree()
 	end
 	repoTreeTried = true
 	local ok, err = pcall(function()
-		local body, treeErr = githubJson('https://api.github.com/repos/themagicpiston/pistonware/git/trees/'..(release.sourceRef or release.branch)..'?recursive=1')
+		local body, treeErr = githubJson('https://api.github.com/repos/z33r0xV3/GOAWARE/git/trees/'..(release.sourceRef or release.branch)..'?recursive=1')
 		if type(body) == 'table' and type(body.tree) == 'table' and type(body.sha) == 'string' then
 			repoTree = body
 			--[[ Handed to main.lua so its asset prefetch reads this instead of spending its own
 			contents/ calls. It only needs the paths, and they are all in here already. ]]
-			shared.PistonwareRepoTree = body
+			shared.GoAwareRepoTree = body
 		else
 			error(treeErr or 'the repository tree was missing its file list', 0)
 		end
@@ -978,7 +978,7 @@ ref advertisement -- what `git clone` reads first -- lists every branch as a pkt
 '<4 hex length><40 hex sha> refs/heads/<name>'. The first line also carries HEAD and the
 capability list after a NUL, which the ref match below never reaches for a branch. ]]
 local function commitFromGitRefs()
-	local body, err = githubGet('https://github.com/themagicpiston/pistonware.git/info/refs?service=git-upload-pack')
+	local body, err = githubGet('https://github.com/z33r0xV3/GOAWARE.git/info/refs?service=git-upload-pack')
 	if not body then return nil, err end
 	local wanted = 'refs/heads/'..release.branch
 	for line in body:gmatch('[^\n]+') do
@@ -997,7 +997,7 @@ end
 
 -- Second non-API source: the branch's commit feed, newest commit first.
 local function commitFromFeed()
-	local body, err = githubGet('https://github.com/themagicpiston/pistonware/commits/'..release.branch..'.atom')
+	local body, err = githubGet('https://github.com/z33r0xV3/GOAWARE/commits/'..release.branch..'.atom')
 	if not body then return nil, err end
 	local sha = body:match('Grit::Commit/(%x+)')
 	if validCommit(sha) then return sha end
@@ -1017,7 +1017,7 @@ local function fetchBranchCommit()
 	-- Why each source failed, in order, so a report names every one of them.
 	local reasons = {}
 	local ok, err = pcall(function()
-		local body, apiErr = githubJson('https://api.github.com/repos/themagicpiston/pistonware/branches/'..release.branch)
+		local body, apiErr = githubJson('https://api.github.com/repos/z33r0xV3/GOAWARE/branches/'..release.branch)
 		local commit = type(body) == 'table' and type(body.commit) == 'table' and body.commit.sha
 		if validCommit(commit) then
 			branchCommit = commit
@@ -1067,7 +1067,7 @@ local function resolveRelease()
 		release.resolved = true
 		release.cacheReady = markerMatches(marker) and marker.commit == commit
 			or false
-		shared.PistonwareRelease = release
+		shared.GoAwareRelease = release
 		logger:info('version.resolved', 'release selected', {
 			channel = release.channel,
 			branch = release.branch,
@@ -1085,7 +1085,7 @@ local function resolveRelease()
 		release.version = release.channel..'@'..tree.sha:sub(1, 12)
 		release.resolved = true
 		release.cacheReady = markerMatches(marker) and marker.commit == tree.sha or false
-		shared.PistonwareRelease = release
+		shared.GoAwareRelease = release
 		logger:info('version.resolved', 'release selected from the repository tree', {
 			channel = release.channel,
 			branch = release.branch,
@@ -1100,7 +1100,7 @@ local function resolveRelease()
 		release.version = release.channel..'@'..marker.commit:sub(1, 12)
 		release.resolved = true
 		release.cacheReady = true
-		shared.PistonwareRelease = release
+		shared.GoAwareRelease = release
 		logger:warn('version.cached', 'using the last verified release because the branch tree was unavailable', {
 			channel = release.channel,
 			version = release.version
@@ -1119,7 +1119,7 @@ local function resolveRelease()
 	release.version = release.channel..'@'..release.branch
 	release.resolved = true
 	release.cacheReady = false
-	shared.PistonwareRelease = release
+	shared.GoAwareRelease = release
 	local reason = branchCommitError or repoTreeError or ('branch '..release.branch..' has no verified release')
 	logger:warn('version.unpinned', 'loading the branch head because no commit could be resolved', {
 		channel = release.channel,
@@ -1149,7 +1149,7 @@ local function persistReleaseMarker()
 		return false
 	end
 	release.cacheReady = true
-	shared.PistonwareRelease = release
+	shared.GoAwareRelease = release
 	return true
 end
 
@@ -1227,7 +1227,7 @@ local function downloadProfilesListing(body, commit, onProgress)
 							return game:HttpGet(projectRawUrl(relPath, commit or release.sourceRef), true)
 						end)
 						if suc and res and res ~= '' and res ~= '404: Not Found' then
-							writefile('pistonware/'..relPath, mergeGuiState('pistonware/'..relPath, res))
+							writefile('goaware/'..relPath, mergeGuiState('goaware/'..relPath, res))
 							succeeded = true
 							break
 						end
@@ -1237,7 +1237,7 @@ local function downloadProfilesListing(body, commit, onProgress)
 					end
 				end)
 			else
-				succeeded = pcall(downloadFile, 'pistonware/'..relPath)
+				succeeded = pcall(downloadFile, 'goaware/'..relPath)
 			end
 			if not succeeded then failed += 1 end
 			--[[ Counted first and reported second, both guarded: this worker's only remaining job
@@ -1287,8 +1287,8 @@ local function updateCachedFiles(onProgress)
 
 	local manifest = {}
 	pcall(function()
-		if isfile('pistonware/filecheck.json') then
-			local decoded = httpService:JSONDecode(readfile('pistonware/filecheck.json'))
+		if isfile('goaware/filecheck.json') then
+			local decoded = httpService:JSONDecode(readfile('goaware/filecheck.json'))
 			if type(decoded) == 'table' then
 				manifest = decoded
 			end
@@ -1312,7 +1312,7 @@ local function updateCachedFiles(onProgress)
 	demand, and is picked up by this pass on the session after it first appears. ]]
 	local toUpdate = {}
 	for path, sha in remote do
-		local localPath = 'pistonware/'..path
+		local localPath = 'goaware/'..path
 		if manifest[path] ~= sha and managed(localPath) then
 			table.insert(toUpdate, path)
 		end
@@ -1324,7 +1324,7 @@ local function updateCachedFiles(onProgress)
 		for path in manifest do
 			if not remote[path] then
 				pcall(function()
-					local localPath = 'pistonware/'..path
+					local localPath = 'goaware/'..path
 					if managed(localPath) then
 						delfile(localPath)
 					end
@@ -1345,7 +1345,7 @@ local function updateCachedFiles(onProgress)
 					end)
 					--[[ compile check: never overwrite a working cached file with an error page ]]
 					if suc and res and res ~= '' and res ~= '404: Not Found' and loadstring(res) ~= nil then
-						pcall(writefile, 'pistonware/'..path, Watermark..'\n'..res)
+						pcall(writefile, 'goaware/'..path, Watermark..'\n'..res)
 						manifest[path] = remote[path]
 						changed = true
 						break
@@ -1366,19 +1366,19 @@ local function updateCachedFiles(onProgress)
 	end
 
 	if changed then
-		pcall(writefile, 'pistonware/filecheck.json', httpService:JSONEncode(manifest))
+		pcall(writefile, 'goaware/filecheck.json', httpService:JSONEncode(manifest))
 	end
 end
 
 --[[
 	Loader console
 	--------------
-	A fake terminal window that stands in for the executor console while pistonware boots.
-	The piston face is drawn one row at a time as the boot progresses, so the art is only
+	A fake terminal window that stands in for the executor console while goaware boots.
+	The goaware face is drawn one row at a time as the boot progresses, so the art is only
 	ever complete at the same moment the status flips to '> DONE'.
 ]]
 
-local PistonFace = {
+local GoAwareFace = {
 	'******=============******++++++=============******',
 	'******=============******++++++=============******',
 	'******=============******++++++=============******',
@@ -1420,7 +1420,7 @@ local AsciiLineHeight = 18
 --[[ The rows under the art are positioned off the art itself, so a taller or shorter face
 pushes them (and the bottom of the window) down instead of colliding with them. ]]
 local AsciiTop = TitleBarHeight + 16
-local StatusY = AsciiTop + #PistonFace * AsciiLineHeight + 16
+local StatusY = AsciiTop + #GoAwareFace * AsciiLineHeight + 16
 local LineY = StatusY + 32
 local AnswersY = LineY + 30
 local WindowHeight = AnswersY + 34 + 30 + 22 + 16
@@ -1440,7 +1440,7 @@ local Palette = {
 	Ok = Color3.fromRGB(120, 225, 150)
 }
 
---[[ Ascii shading: the art is one colour in a real terminal, but the piston only reads as a
+--[[ Ascii shading: the art is one colour in a real terminal, but the goaware only reads as a
 face if the solid blocks sit brighter than the dithered background, so each glyph class
 gets its own tone. ]]
 local AsciiShades = {
@@ -1480,12 +1480,12 @@ and running it manually hit this same stale flag and said it again.
 This is the WHOLE of what a failed key gate does. It never calls deleteInstall: the folder holds
 the profiles the user built themselves, and wiping those because LuaArmor answered 'expired'
 would charge them everything they configured for something a renewed key fixes in ten seconds.
-The key outlives the install anyway -- pistonwarekey.json sits outside the folder for exactly
+The key outlives the install anyway -- goawarekey.json sits outside the folder for exactly
 that reason -- so the deletion would be pure loss. ]]
 local function releaseBoot()
-	if shared.PistonwareLoaderBoot ~= bootStamp then return end
-	shared.PistonwareLoaderBoot = nil
-	shared.PistonwareKeyPrompt = nil
+	if shared.GoAwareLoaderBoot ~= bootStamp then return end
+	shared.GoAwareLoaderBoot = nil
+	shared.GoAwareKeyPrompt = nil
 	shared.vapereload = nil
 end
 
@@ -1497,7 +1497,7 @@ local function deleteInstall()
 	if not freshInstall then return end
 	pcall(function()
 		if delfolder then
-			delfolder('pistonware')
+			delfolder('goaware')
 			return
 		end
 		local function purge(folder)
@@ -1509,7 +1509,7 @@ local function deleteInstall()
 				end
 			end
 		end
-		purge('pistonware')
+		purge('goaware')
 	end)
 end
 
@@ -1544,8 +1544,8 @@ local function createConsole()
 		is the natural response to all of them, so without this the leak grows once per attempt
 		rather than being replaced. ]]
 	pcall(function()
-		if type(shared.PistonwareLoaderTeardown) == 'function' then
-			shared.PistonwareLoaderTeardown()
+		if type(shared.GoAwareLoaderTeardown) == 'function' then
+			shared.GoAwareLoaderTeardown()
 		end
 	end)
 
@@ -1558,7 +1558,7 @@ local function createConsole()
 	end
 
 	local screen = Instance.new('ScreenGui')
-	screen.Name = 'PistonwareLoader'
+	screen.Name = 'GoAwareLoader'
 	screen.DisplayOrder = 999999999
 	screen.IgnoreGuiInset = true
 	screen.ResetOnSpawn = false
@@ -1661,7 +1661,7 @@ local function createConsole()
 	title.BackgroundTransparency = 1
 	title.Size = UDim2.new(1, -220, 1, 0)
 	title.Position = UDim2.fromOffset(110, 0)
-	title.Text = './pistonware-loader'
+	title.Text = './goaware-loader'
 	title.TextColor3 = Palette.Title
 	title.TextSize = 18
 	title.Font = Enum.Font.Code
@@ -1679,8 +1679,8 @@ local function createConsole()
 		table.clear(connections)
 		pcall(function() screen:Destroy() end)
 		--[[ Only clear the handle if it is still ours; a newer console may already own it. ]]
-		if shared.PistonwareLoaderTeardown == destroy then
-			shared.PistonwareLoaderTeardown = nil
+		if shared.GoAwareLoaderTeardown == destroy then
+			shared.GoAwareLoaderTeardown = nil
 		end
 	end
 
@@ -1806,11 +1806,11 @@ local function createConsole()
 	local ascii = Instance.new('Frame')
 	ascii.BackgroundTransparency = 1
 	ascii.Position = UDim2.fromOffset(ContentPadding, AsciiTop)
-	ascii.Size = UDim2.fromOffset(WindowWidth - ContentPadding * 2, #PistonFace * AsciiLineHeight)
+	ascii.Size = UDim2.fromOffset(WindowWidth - ContentPadding * 2, #GoAwareFace * AsciiLineHeight)
 	ascii.Parent = window
 
 	local rows = {}
-	for index, line in PistonFace do
+	for index, line in GoAwareFace do
 		local label = Instance.new('TextLabel')
 		label.BackgroundTransparency = 1
 		label.Position = UDim2.fromOffset(0, (index - 1) * AsciiLineHeight)
@@ -2027,7 +2027,7 @@ local function createConsole()
 	Clamped upwards only: a late progress report from a background step must never pull rows
 	back off the face (nothing here ever un-boots). ]]
 	function console:SetProgress(alpha)
-		local count = math.clamp(math.floor(alpha * #PistonFace + 0.5), 0, #PistonFace)
+		local count = math.clamp(math.floor(alpha * #GoAwareFace + 0.5), 0, #GoAwareFace)
 		revealTarget = math.max(revealTarget, count)
 	end
 
@@ -2252,7 +2252,7 @@ local function createConsole()
 		if closed then return end
 		self:SetProgress(1)
 		local drawn = os.clock() + 2
-		repeat task.wait() until revealed >= #PistonFace or closed or os.clock() > drawn
+		repeat task.wait() until revealed >= #GoAwareFace or closed or os.clock() > drawn
 		--[[ the last row is still fading in when the counter hits the end ]]
 		task.wait(0.2)
 		if closed then return end
@@ -2291,7 +2291,7 @@ local function createConsole()
 	end
 
 	--[[ Published so the next execution can tear this console down before building its own. ]]
-	shared.PistonwareLoaderTeardown = destroy
+	shared.GoAwareLoaderTeardown = destroy
 
 	return console
 end
@@ -2357,507 +2357,25 @@ do
 end
 logger:bindConsole(console)
 logger:info('console.ready', isReload and 'headless console ready' or 'console ready', {reload = isReload})
---[[ The key gate is the first thing that runs -- every run, reinjects included -- so the console
-opens directly onto it rather than flashing '> INJECTING' for a frame first. ]]
-console:SetStatus('AUTHENTICATING', nil, '<')
-console:SetLine('Checking your key...')
-console:SetProgress(0.08)
-
---[[
-	Step 0: the key gate.
-
-	Nothing past this block runs until a LuaArmor key validates -- no folders are created, no
-	files are downloaded, no config prompts appear, main.lua is never reached, and so neither
-	are guis/*.lua, games/<PlaceId>.lua or games/bedwars.lua. Vape cannot load unkeyed because
-	the code that loads it is on the far side of this block.
-]]
 do
-	local httpService = cloneref(game:GetService('HttpService'))
-
-	--[[ Reads are separate from writes: setclipboard is already resolved at the top of the file,
-	but reading needs its own lookup and is missing on more executors than writing is. ]]
-	local canPaste = (getclipboard ~= nil) or (syn ~= nil and syn.read_clipboard ~= nil)
-	local function clipboardGet()
-		local fn = getclipboard or (syn and syn.read_clipboard)
-		if not fn then return nil end
-		local ok, res = pcall(fn)
-		if ok and type(res) == 'string' then return res end
-		return nil
-	end
-	local function clipboardSet(text)
-		if not setclipboard then return false end
-		return (pcall(setclipboard, text))
-	end
-
-	--[[ Both key buttons come through here, so a provider nobody has filled in yet says so
-	instead of copying an empty string, and the wording is the same whichever button was
-	pressed. ]]
-	local function copyLink(name, url, say)
-		if url == '' then
-			say(t('link_missing', name), 'err')
-			return
-		end
-		if clipboardSet(url) then
-			say(t('link_copied', name))
-		else
-			say(t('copy_failed'), 'err')
-		end
-	end
-
-	--[[ pistonwarekey.json lives at the workspace root rather than under pistonware/, so that
-	reinstall.lua (and cancelling a first install, which wipes the whole folder) can't cost
-	the user a key they already paid checkpoints for. ]]
-	local hasFiles = (isfile and readfile and writefile) and true or false
-	local function readSavedKey()
-		if not hasFiles then return nil end
-		local ok, key = pcall(function()
-			if isfile(KEY_FILE) then
-				local decoded = httpService:JSONDecode(readfile(KEY_FILE))
-				if type(decoded) == 'table' then return decoded.key end
-			end
-			return nil
-		end)
-		return ok and key or nil
-	end
-	local function saveKey(key)
-		if not hasFiles then return end
-		pcall(function()
-			writefile(KEY_FILE, httpService:JSONEncode({key = key, saved = os.time()}))
-		end)
-	end
-	local function deleteSavedKey()
-		pcall(function()
-			if isfile(KEY_FILE) then
-				delfile(KEY_FILE)
-			end
-		end)
-	end
-
-	--[[ One line, capped, and run through safeText so an executor error carrying a key in a URL
-	cannot end up in the log. ]]
-	local function shortError(err, limit)
-		return safeText(err, limit or 160)
-	end
-
-	--[[ Executor errors arrive as '<chunk>:<line>: <message>', and on some executors that chunk
-	is an absolute path long enough to fill the console line on its own -- leaving the part
-	worth reading to be truncated away. Stripped for display only; the log copy keeps the
-	position, which is what anyone actually debugging it wants. ]]
-	local function errorMessage(err)
-		return shortError(select(1, tostring(err or ''):gsub('^.-:%d+: ', '')), 90)
-	end
-
-	--[[ LuaArmor's public SDK, fetched on first use and reused once it lands.
-
-	Retried the way downloadFile retries the repo, and for the same reason: this is the least
-	reliable request the loader makes. Executors routinely fail the first HttpGet of a session
-	while the game is still loading, and the CDN in front of library.lua answers with an
-	interstitial often enough to matter. One attempt turned every one of those into a flat
-	'Failed to load the LuaArmor library.'
-
-	The failure is deliberately NOT latched any more. It used to be: one flag said 'tried', and
-	after a single bad request every later call in the session returned nil without touching the
-	network again. The key prompt has no timeout, so someone could sit there submitting a
-	perfectly good key forever and never once have it checked -- the only way out was restarting
-	Roblox. A failed round now arms a short cooldown instead, which stops the candidate sweep
-	below from re-fetching for every key it tries, while any human retry (nobody clicks Submit
-	twice in five seconds) gets a genuinely fresh attempt.
-
-	apiFailure is the short label the console shows, apiDetail the full text for the log. They
-	are separate because these fail in four quite different ways and the difference is the whole
-	diagnosis: the request throwing is network, DNS or a blocked host; a body that will not
-	compile is a block page rather than the library; a chunk that throws is LuaArmor's own code
-	hitting something missing in the executor; and a chunk that returns the wrong shape means
-	the SDK changed under us. ]]
-	local api, apiCooldown, apiFailure, apiDetail
-	local function getApi()
-		if api then return api end
-		--[[ Long enough that the three candidates below share one round of attempts instead of
-		spending nine requests on a network that is plainly down; short enough that it has
-		always expired by the time somebody presses Submit again. ]]
-		if apiCooldown and os.clock() < apiCooldown then return nil end
-
-		for attempt = 1, 3 do
-			local ok, body = pcall(function()
-				return game:HttpGet('https://sdkapi-public.luarmor.net/library.lua', true)
-			end)
-			if not ok then
-				apiFailure, apiDetail = 'network', shortError(body)
-			elseif type(body) ~= 'string' or body == '' then
-				apiFailure, apiDetail = 'no response', 'the request came back empty'
-			else
-				local chunk, compileError = loadstring(body, 'luarmor')
-				if not chunk then
-					--[[ A block page, a captcha or an ISP error page -- all of them arrive as a
-					perfectly successful request full of HTML. ]]
-					apiFailure, apiDetail = 'blocked', shortError(compileError)
-				else
-					local ranOk, lib = pcall(chunk)
-					if not ranOk then
-						apiFailure, apiDetail = 'library error', shortError(lib)
-					elseif type(lib) ~= 'table' or type(lib.check_key) ~= 'function' then
-						apiFailure, apiDetail = 'bad library', 'the SDK loaded without a check_key'
-					else
-						lib.script_id = SCRIPT_ID
-						api = lib
-						apiFailure, apiDetail = nil, nil
-						return api
-					end
-				end
-			end
-			if attempt < 3 then task.wait(attempt) end
-		end
-
-		apiCooldown = os.clock() + 5
-		logger:warn('key.library', 'could not load the LuaArmor SDK', {reason = apiFailure, detail = apiDetail})
-		return nil
-	end
-	local function checkKey(key)
-		local lib = getApi()
-		if not lib then
-			--[[ library = true marks a non-verdict: nothing was checked, so the key is neither
-			good nor bad and nothing downstream may treat it as rejected. ]]
-			return {code = 'UNKNOWN_ERROR', library = true, message = t('no_library', apiFailure or 'unknown')}
-		end
-		local ok, status = pcall(function()
-			return lib.check_key(key)
-		end)
-		--[[ A table with no code is not a verdict either; taking one used to leave every branch
-		below unmatched, which read as 'checked, and nothing was wrong'. ]]
-		if ok and type(status) == 'table' and status.code then return status end
-		--[[ check_key throwing is worth repeating verbatim: it is nearly always the executor
-		missing something the SDK wants (identifyexecutor, a hwid source) rather than anything
-		to do with the key, and the message names it. ]]
-		if not ok then logger:warn('key.check', 'check_key failed', {detail = shortError(status)}) end
-		--[[ Cut shorter than the logged copy: the console line is one row and the log already has
-		the whole thing. ]]
-		return {code = 'UNKNOWN_ERROR', library = true, message = t('check_error', ok and 'no response' or errorMessage(status))}
-	end
-
-	--[[ Publishes the validated key where the protected payload will look for it. The LuaArmor
-	build reads the global script_key when it runs, which is much later and in a different
-	chunk (main.lua -> games/6872274481.lua -> the GitLab redirect), so the key has to go into
-	the shared global environment rather than a local here.
-
-	Written BOTH ways deliberately, not either/or. On most executors a plain global assignment
-	and getgenv() land in the same table, but not on all of them -- and when they diverge the
-	failure is LuaArmor reporting 'No key found' for a key that was very much set, which is
-	indistinguishable from a wrong key and near-impossible to diagnose from the message. Two
-	assignments cost nothing and remove the whole failure class.
-
-	shared.PistonwareKey is the copy main.lua re-embeds into its queued teleport script:
-	globals do not survive a teleport, and the new server re-runs the appropriate loader. ]]
-	local function authenticate(key)
-		script_key = key
-		pcall(function() getgenv().script_key = key end)
-		pcall(function() _G.script_key = key end)
-		shared.PistonwareKey = key
-		shared.PistonwareAuthenticated = true
-	end
-
-	--[[ Authentication is re-derived from a real key on EVERY run, never inherited. shared lives
-	for the whole executor session, so trusting a flag found in it would make
-	`shared.PistonwareAuthenticated = true` in front of the loadstring a one-line gate skip --
-	the exact copy-pasteable bypass that ends up shared around. Clearing it first means the
-	only way past this block is a key LuaArmor actually accepts.
-
-	The cost is one check_key per loader run, including reinjects. That is fine: reinjects are
-	deliberate user actions (the reinject button, a theme switch, a profile switch), not
-	anything on a hot path, and check_key is the call LuaArmor expects on every script start. ]]
-	shared.PistonwareAuthenticated = nil
-
-	do
-		local reason
-		--[[ Kept apart from `reason` on purpose. `reason` means LuaArmor returned a verdict on
-		the key; a notice means it never got that far -- the library would not load, or
-		check_key threw -- so nothing was decided at all. Both travel to the prompt, because
-		the alternative is a bare 'Enter your key below' that says nothing about the check
-		that just failed, but only one of the two is the key's fault. ]]
-		local notice
-
-		local savedKey = readSavedKey()
-		if savedKey then
-			savedKey = trim(savedKey)
-			if savedKey == '' then savedKey = nil end
-		end
-
-		--[[ Three places a key can already be, tried in this order:
-
-		  1. a script_key global set in front of the loadstring. This is the snippet
-		     LuaArmor's own bot hands people, so it has to work -- and it is the most
-		     explicit statement of intent there is: pasting a key means use THAT key.
-		  2. shared.PistonwareKey, the copy a reinject carries so the user is not asked
-		     again for a key that was validated seconds ago.
-		  3. pistonwarekey.json.
-
-		Every one is tried until one validates, rather than committing to the first that
-		exists. That matters for the new source: a mistyped key pasted in front of the
-		loadstring should fall back to the good key on disk, not force the prompt and make
-		the user think their saved key had gone.
-
-		None of these are trusted. They are candidates, and LuaArmor decides. ]]
-		local candidates, seen = {}, {}
-		local function offer(value)
-			if type(value) ~= 'string' then return end
-			value = trim(value)
-			if value == '' or seen[value] then return end
-			seen[value] = true
-			table.insert(candidates, value)
-		end
-
-		--[[ Executors disagree about where a chunk's globals live, so a key the user set before
-		the loadstring can land in any of these three tables -- the same divergence that
-		made authenticate() write all three. ]]
-		for _, src in {
-			function() return script_key end,
-			function() return getgenv().script_key end,
-			function() return _G.script_key end
-		} do
-			local ok, value = pcall(src)
-			if ok then offer(value) end
-		end
-		offer(shared.PistonwareKey)
-		offer(savedKey)
-
-		for _, candidate in candidates do
-			local status = checkKey(candidate)
-			local code = status.code
-			--[[ Only the key that came off disk is deleted on rejection: a bogus preset or
-			session key must not be able to destroy the good one the user has saved. ]]
-			local fromDisk = candidate == savedKey
-			if code == 'KEY_VALID' then
-				rememberExpiry(status)
-				authenticate(candidate)
-				--[[ Persist whatever just worked. This is what makes LuaArmor's snippet behave
-				the way people expect: paste it once, the key lands in pistonwarekey.json,
-				and every run after that needs no key in front of the loadstring at all. ]]
-				if candidate ~= savedKey then saveKey(candidate) end
-				break
-			--[[ Only a key that CANNOT come back is deleted. Two of these four states used to
-			delete it and should never have:
-
-			  KEY_HWID_LOCKED is not a bad key. LuaArmor's own wording is "key is valid, hwid
-			  does not match and needs to be reset". The user resets their HWID via the bot,
-			  comes back, and it works -- except that we had already thrown the key away, so
-			  instead they came back to an empty prompt and had to go find the key again.
-			  That is the bug this fixes: a key with time left on it, in the ordinary waiting
-			  state, being treated as though it had died.
-
-			  KEY_EXPIRED is renewable. The ad link renews the same key rather than issuing a
-			  different one, so deleting it costs the user a re-paste for no gain.
-
-			KEY_INCORRECT (does not exist in the database) and KEY_BANNED (blacklisted) are
-			the genuinely terminal ones. Nothing the user does brings those back, so a stale
-			file only means a wasted request on every future run. ]]
-			elseif code == 'KEY_EXPIRED' then
-				reason = fromDisk and t('saved_expired') or t('expired')
-			elseif code == 'KEY_HWID_LOCKED' then
-				reason = fromDisk and t('saved_hwid') or t('hwid_locked')
-			elseif code == 'KEY_INCORRECT' then
-				if fromDisk then deleteSavedKey() end
-				reason = fromDisk and t('saved_incorrect') or t('incorrect')
-			elseif code == 'KEY_BANNED' then
-				if fromDisk then deleteSavedKey() end
-				reason = fromDisk and t('saved_banned') or t('banned')
-			elseif status.library then
-				notice = status.message
-			end
-			--[[ UNKNOWN_ERROR / SECURITY_ERROR / TIME_ERROR / INVALID_EXECUTOR and friends also
-			keep the file, for the same reason: the key is probably fine and LuaArmor (or the
-			network, or the executor) is not, so a bad minute must not cost the user the key
-			they already earned. They just get prompted this once. ]]
-		end
-
-		if not shared.PistonwareAuthenticated then
-			--[[ Nothing is torn down here, on purpose.
-
-			A key is a load-time question. Someone already injected and playing keeps
-			everything they have -- the vape stays hooked, the profile they equipped stays
-			equipped, the install and its configs stay on disk -- and the expiry stops the
-			NEXT load instead. The alternatives are both worse: polling LuaArmor on a timer
-			to catch the moment it lapses, or pulling the game out from under someone
-			mid-match, which lands at the worst possible time precisely because nobody is
-			expecting their key to run out right then.
-
-			So a rejected key costs the boot and nothing else. ]]
-
-			--[[
-				From here the key UI is not optional, and the loop is what makes that true.
-
-				Headless is the right default for a run something else began: the reinject
-				button, a profile reset, a config sync. None of those should throw a terminal
-				over the game when the key they are carrying still works.
-
-				It is exactly wrong once the key is the thing that failed. A headless AskKey
-				answers nil immediately, so the boot ended on a console warning nobody reads
-				mid-match -- and the line it printed, 'run the loader manually to enter one',
-				could not even be acted on, because the run had left shared.vapereload set and
-				every execution afterwards went down this same headless path. An expired key
-				meant restarting Roblox.
-
-				Two other ways the window used to be skipped, both closed here as well: a
-				console that had already been closed by hand returned straight out of the gate
-				(the boot was cancelled, but so was the only chance to fix the key), and a
-				single pcall(createConsole) that happened to throw -- CoreGui and gethui are
-				the one thing in this file that can fail on a hostile executor -- fell through
-				to the same dead end. So an aborted console is rebuilt rather than obeyed, and
-				a failed build is retried before giving up.
-
-				Every route that reaches here is a deliberate action: a manual execution, or an
-				in-game click (a teleport re-runs main.lua directly and never touches this
-				file). Somebody is at the keyboard. Give them something to type into.
-			]]
-			local canPrompt = false
-			for attempt = 1, 3 do
-				--[[ The window this run already built is fine unless it is headless (a reload)
-				or the user has closed it; either way it cannot take a key. ]]
-				if attempt == 1 and not isReload and not console:IsAborted() then
-					canPrompt = true
-					break
-				end
-				local built, upgraded = pcall(createConsole)
-				if built and upgraded then
-					console = upgraded
-					logger:bindConsole(console)
-					canPrompt = true
-					break
-				end
-				logger:warn('key.console', 'could not build the key prompt console', {attempt = attempt})
-				task.wait(0.5)
-			end
-
-			console:SetStatus('KEY SYSTEM', nil, '<')
-			console:SetProgress(0.1)
-
-			--[[ Raised for the duplicate-execution guard at the top of the file: AskKey does not
-			return until the user types something or the window closes, and while it is up a
-			second execution is allowed through to build a prompt of its own instead of being
-			turned away in silence. Stamped rather than a bare true so only the boot that
-			raised it can lower it again. ]]
-			shared.PistonwareKeyPrompt = bootStamp
-
-			local key = console:AskKey({
-				message = reason or notice or t('enter_key'),
-				messageKind = (reason or notice) and 'err' or nil,
-				placeholder = t('placeholder'),
-				footer = t('footer'),
-				pasteText = t('paste'),
-				pasteTip = t('tip_paste'),
-				submitText = t('submit'),
-				submitTip = t('tip_submit'),
-				helpText = t('need_help'),
-				helpTip = t('tip_help'),
-				--[[ The order here is the order on screen, and each entry carries its own URL
-				and its own line of hover help -- the console draws whatever it is handed and
-				knows nothing about LuaArmor. ]]
-				links = {
-					{text = t('work_ink'), tooltip = t('tip_work_ink'), onClick = function(say)
-						copyLink('Work.ink', WORKINK_URL, say)
-					end},
-					{text = t('loot_labs'), tooltip = t('tip_loot_labs'), onClick = function(say)
-						copyLink('LootLabs', LOOTLABS_URL, say)
-					end}
-				},
-				--[[ Left nil when the executor cannot read the clipboard, which drops the button
-				from the row entirely; ctrl+v into the box still works. ]]
-				onPaste = canPaste and function(say)
-					local clip = clipboardGet()
-					if clip and trim(clip) ~= '' then
-						say(t('pasted'))
-						return trim(clip)
-					end
-					say(t('clipboard_empty'), 'err')
-					return nil
-				end or nil,
-				onHelp = function(say)
-					if clipboardSet(HELP_URL) then
-						say(t('help_copied'))
-					else
-						say(t('copy_failed'), 'err')
-					end
-				end,
-				onSubmit = function(key, say)
-					if key == '' then
-						say(t('empty_key'), 'err')
-						return false
-					end
-					--[[ Cheap local reject before spending a request on something that cannot be
-					a key (usually a half-pasted clipboard). ]]
-					if #key < 8 then
-						say(t('bad_format'), 'err')
-						return false
-					end
-					say(t('checking'))
-					local status = checkKey(key)
-					local code = status.code
-					if code == 'KEY_VALID' then
-						saveKey(key)
-						rememberExpiry(status)
-						say(t('valid_loading', keyDetail(status)), 'ok')
-						authenticate(key)
-						return true
-					elseif code == 'KEY_HWID_LOCKED' then
-						say(t('hwid_locked'), 'err')
-					elseif code == 'KEY_EXPIRED' then
-						say(t('expired'), 'err')
-					elseif code == 'KEY_BANNED' then
-						say(t('banned'), 'err')
-					elseif code == 'KEY_INCORRECT' then
-						say(t('incorrect'), 'err')
-					elseif code == 'KEY_INVALID' then
-						say(t('invalid_format'), 'err')
-					elseif status.library then
-						--[[ Nothing was checked, so this is not a verdict on what they typed --
-						the message says so and asks them to press Submit again. ]]
-						say(status.message, 'err')
-					else
-						say(t('check_failed', tostring(status.message), tostring(code)), 'err')
-					end
-					return false
-				end
-			})
-
-			if shared.PistonwareKeyPrompt == bootStamp then
-				shared.PistonwareKeyPrompt = nil
-			end
-
-			--[[ IsAborted() as well as the nil test: closing the window while a check is still in
-			flight lets that check land afterwards and set `accepted`, and a cancelled boot
-			must not carry on just because the key turned out to be good. The key is still
-			saved and the session still counts as authenticated, so the next run skips the
-			gate -- cancelling costs the boot, not the key. ]]
-			if not key or console:IsAborted() then
-				--[[ The window closed, or -- only if a console could not be built at all, three
-				tries deep -- there was nowhere to ask. Nothing has been downloaded or
-				injected, so the boot simply stops. ]]
-				local message = (not canPrompt) and t('headless') or t('cancelled')
-				if not console:IsAborted() then
-					console:Fail(message)
-				end
-				--[[ Keep the failure in the buffer as well as the console line so a headless reload
-				still leaves a reportable result. ]]
-				logger:warn('loader.cancelled', message)
-				--[[ Flags only. No uninject, no delete: leaving the gate without a key ends
-				this boot, not the session that is already running and not the install. ]]
-				releaseBoot()
-				return
-			end
-		end
-	end
-
-	--[[ Authenticated: hand the console back to the boot it was holding up. ]]
-	phase('key gate')
-	console:SetStatus('INJECTING')
-	console:SetLine('Injecting into ROBLOX...')
-	console:SetProgress(0.12)
+	local keylessKey = 'goaware-keyless'
+	script_key = keylessKey
+	pcall(function() getgenv().script_key = keylessKey end)
+	pcall(function() _G.script_key = keylessKey end)
+	shared.GoAwareKey = keylessKey
+	shared.GoAwareAuthenticated = true
 end
 
+phase('key gate')
+console:SetStatus('INJECTING')
+console:SetLine('Injecting into ROBLOX...')
+console:SetProgress(0.12)
 --[[ Decided before the folders are created, while 'did this run create the install' is still
 observable. The key gate above yields, but it runs before any folder exists and its own
 cancel path returns without reaching here, so freshInstall still cannot be read stale. ]]
 local foldersOk, foldersError = xpcall(function()
-	freshInstall = not isfolder('pistonware')
-	for _, folder in {'pistonware', 'pistonware/games', 'pistonware/profiles', 'pistonware/assets', 'pistonware/libraries', 'pistonware/guis'} do
+	freshInstall = not isfolder('goaware')
+	for _, folder in {'goaware', 'goaware/games', 'goaware/profiles', 'goaware/assets', 'goaware/libraries', 'goaware/guis'} do
 		if not isfolder(folder) then
 			makefolder(folder)
 		end
@@ -2867,9 +2385,9 @@ end, errorTrace)
 	stopExecution(console, 'filesystem.setup', foldersError, foldersError)
 	return
 	end
-	markPistonwareBufferFilesystemReady()
-	logger:addFile('pistonware/loader.log')
-telemetry:addFile('pistonware/loader_telemetry.jsonl')
+	markGoAwareBufferFilesystemReady()
+	logger:addFile('goaware/loader.log')
+telemetry:addFile('goaware/loader_telemetry.jsonl')
 
 local releaseOk, releaseError = resolveRelease()
 if not releaseOk then
@@ -2889,7 +2407,7 @@ network. Run in sequence, the boot paid for both. Started here, the update check
 inside the wait it used to follow, and on a warm cache it is finished before Roblox is.
 
 Nothing in updateCachedFiles touches game state, which is what made the old ordering
-necessary in the first place -- it reads a GitHub tree and writes files into pistonware/.
+necessary in the first place -- it reads a GitHub tree and writes files into goaware/.
 Both folders and authentication are already behind us, so the security ordering is intact:
 this still cannot start until a key has validated. ]]
 local updateDone = isReload or isDeveloper
@@ -2957,7 +2475,7 @@ console:SetProgress(0.46)
 know afterwards whether to show the prompts below. ]]
 local firstRunProfiles = false
 pcall(function()
-	firstRunProfiles = #listfiles('pistonware/profiles') < 3
+	firstRunProfiles = #listfiles('goaware/profiles') < 3
 end)
 
 --[[ profilecheck.txt persists a prior 'No' answer, so the download prompt only asks once --
@@ -2965,8 +2483,8 @@ without it, a user who declines would get nagged again on every reinject (the pr
 folder stays under 3 files forever if nothing gets downloaded). ]]
 local declinedDownload = false
 pcall(function()
-	if isfile('pistonware/profiles/profilecheck.txt') then
-		declinedDownload = readfile('pistonware/profiles/profilecheck.txt') == 'false'
+	if isfile('goaware/profiles/profilecheck.txt') then
+		declinedDownload = readfile('goaware/profiles/profilecheck.txt') == 'false'
 	end
 end)
 
@@ -2984,7 +2502,7 @@ if firstRunProfiles and not declinedDownload then
 	if console:IsAborted() then deleteInstall() return end
 	wantsDownload = ok and res == true
 	if not wantsDownload then
-		pcall(function() writefile('pistonware/profiles/profilecheck.txt', 'false') end)
+		pcall(function() writefile('goaware/profiles/profilecheck.txt', 'false') end)
 	end
 end
 console:SetProgress(0.53)
@@ -3004,7 +2522,7 @@ if firstRunProfiles and not declinedDownload and wantsDownload then
 	end)
 		if synced then
 			pcall(function()
-				downloadedConfigs = #listfiles('pistonware/profiles') >= 3
+				downloadedConfigs = #listfiles('goaware/profiles') >= 3
 			end)
 		end
 	--[[ Record which commit this download reflects, so later sessions can tell whether profiles/
@@ -3013,7 +2531,7 @@ if firstRunProfiles and not declinedDownload and wantsDownload then
 		pcall(function()
 			local commit = profilesFingerprint()
 			if commit then
-				writefile('pistonware/profiles/profilecommit.txt', commit)
+				writefile('goaware/profiles/profilecommit.txt', commit)
 			end
 		end)
 	end
@@ -3031,14 +2549,14 @@ the whole signal -- delete the file to be asked again. Checked before the finger
 fetch so an opted-out boot does not spend a request on a question it will never ask. ]]
 local syncOptedOut = false
 pcall(function()
-	syncOptedOut = isfile('pistonware/optout.txt')
+	syncOptedOut = isfile('goaware/optout.txt')
 end)
 
 if not firstRunProfiles and not declinedDownload and not isReload and not syncOptedOut then
 	local latestCommit, cachedCommit
 	pcall(function()
 		latestCommit = profilesFingerprint()
-		cachedCommit = isfile('pistonware/profiles/profilecommit.txt') and readfile('pistonware/profiles/profilecommit.txt'):gsub('%s', '') or nil
+		cachedCommit = isfile('goaware/profiles/profilecommit.txt') and readfile('goaware/profiles/profilecommit.txt'):gsub('%s', '') or nil
 	end)
 
 	--[[ Existing installs hold a 40-char git sha from the old scheme, which can never equal a
@@ -3047,7 +2565,7 @@ if not firstRunProfiles and not declinedDownload and not isReload and not syncOp
 	to re-sync, and the prompt is the kind that gets clicked through once and distrusted
 	thereafter. ]]
 	if latestCommit and cachedCommit and #cachedCommit == 40 and cachedCommit:match('^%x+$') then
-		pcall(writefile, 'pistonware/profiles/profilecommit.txt', latestCommit)
+		pcall(writefile, 'goaware/profiles/profilecommit.txt', latestCommit)
 		cachedCommit = latestCommit
 	end
 
@@ -3061,7 +2579,7 @@ if not firstRunProfiles and not declinedDownload and not isReload and not syncOp
 		end)
 		if console:IsAborted() then deleteInstall() return end
 		if ok and wantsSync == 'optout' then
-			pcall(writefile, 'pistonware/optout.txt', 'true')
+			pcall(writefile, 'goaware/optout.txt', 'true')
 		end
 		if ok and wantsSync == true then
 			console:SetLine('Syncing configs...')
@@ -3090,7 +2608,7 @@ if not firstRunProfiles and not declinedDownload and not isReload and not syncOp
 					return
 				end
 
-				local guipath = 'pistonware/profiles/'..game.GameId..'.gui.txt'
+				local guipath = 'goaware/profiles/'..game.GameId..'.gui.txt'
 				if not isfile(guipath) then return end
 				local guidata = cloneref(game:GetService('HttpService')):JSONDecode(readfile(guipath))
 				if type(guidata) == 'table' and type(guidata.Profile) == 'string' and guidata.Profile ~= '' then
@@ -3120,7 +2638,7 @@ if not firstRunProfiles and not declinedDownload and not isReload and not syncOp
 					console:SetProgress(0.6 + 0.13 * (completed / math.max(total, 1)))
 				end)
 				if synced then
-					writefile('pistonware/profiles/profilecommit.txt', latestCommit)
+					writefile('goaware/profiles/profilecommit.txt', latestCommit)
 				else
 					--[[ Through the logger rather than a bare warn, so it obeys the same
 					developer gate as every other line and still reaches the log file. ]]
@@ -3174,7 +2692,7 @@ end
 
 phase('config prompt')
 console:SetProgress(0.8)
-console:SetLine('Loading pistonware...')
+console:SetLine('Loading goaware...')
 --[[ Reveals the last couple of rows while main.lua downloads and builds the GUI, so the face
 is still one row short of finished when injection actually completes. ]]
 local injecting = true
@@ -3191,9 +2709,9 @@ task.spawn(function()
 end)
 
 --[[ Protected so a failure surfaces on the console line instead of leaving the window stuck on
-'Loading pistonware...'; the buffer retains the diagnostic without public executor output. ]]
+'Loading goaware...'; the buffer retains the diagnostic without public executor output. ]]
 local ok, result = xpcall(function()
-	local chunk, compileError = loadstring(downloadFile('pistonware/main.lua'), 'main')
+	local chunk, compileError = loadstring(downloadFile('goaware/main.lua'), 'main')
 	if not chunk then
 		error(compileError or 'main.lua did not compile', 0)
 	end
@@ -3206,7 +2724,7 @@ Loading' notification on a reload). Left set it would leak into the rest of the 
 since main.lua never clears it and the next teleport/reinject sets it again anyway. ]]
 shared.vapereload = nil
 --[[ Boot is over (successfully or not) -- reinjects and later manual runs may proceed. ]]
-shared.PistonwareLoaderBoot = nil
+shared.GoAwareLoaderBoot = nil
 
 --[[ Cancelled while the GUI was already building: tear that back down too, then wipe whatever
 the run wrote after cancel's first pass. ]]

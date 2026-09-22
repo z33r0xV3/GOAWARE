@@ -63,7 +63,7 @@ def request(url: str) -> urllib.request.Request:
         url,
         headers={
             "Accept": "application/vnd.github+json",
-            "User-Agent": "pistonware-luau-tests",
+            "User-Agent": "goaware-luau-tests",
         },
     )
 
@@ -254,7 +254,7 @@ def smoke_program() -> str:
 
 
 def run_smoke(runtime: Path) -> None:
-    with tempfile.TemporaryDirectory(prefix="pistonware-luau-smoke-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="goaware-luau-smoke-") as temporary:
         script = Path(temporary) / "roblox_smoke.lua"
         script.write_text(smoke_program(), encoding="utf-8")
         result = subprocess.run([str(runtime), str(script)], cwd=ROOT, capture_output=True, text=True)

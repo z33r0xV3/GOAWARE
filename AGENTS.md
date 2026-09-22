@@ -35,8 +35,8 @@ Run all tests with `python3 tests/check_luau.py` before committing or pushing.
 
 - Never mention any antitamper system or its implementation in public-release code,
   documentation, changelogs, or other user-facing release artifacts.
-- Never update `AGENTS.md` in the public repositories `scrxpted7327/pistonware-patches` or
-  `themagicpiston/pistonware`.
+- Never update `AGENTS.md` in the public repositories `scrxpted7327/goaware-patches` or
+  `z33r0xV3/GOAWARE`.
 
 ## BedWars payload handling
 

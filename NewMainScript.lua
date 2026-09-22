@@ -1,14 +1,14 @@
-local pistonwareBuffer
+local goawareBuffer
 pcall(function()
 	local env = getgenv()
-	pistonwareBuffer = type(env.pistonware) == 'table' and env.pistonware.buffer or nil
+	goawareBuffer = type(env.goaware) == 'table' and env.goaware.buffer or nil
 end)
 
-if not shared.PistonwareAuthenticated then
-	if type(pistonwareBuffer) == 'table' and type(pistonwareBuffer.warn) == 'function' then
-		pistonwareBuffer.warn('legacy.entrypoint', 'NewMainScript.lua no longer injects on its own -- run loader.lua instead')
-	elseif shared.PistonwareDeveloper == true then
-		warn('[pistonware] NewMainScript.lua no longer injects on its own -- run loader.lua instead')
+if not shared.GoAwareAuthenticated then
+	if type(goawareBuffer) == 'table' and type(goawareBuffer.warn) == 'function' then
+		goawareBuffer.warn('legacy.entrypoint', 'NewMainScript.lua no longer injects on its own -- run loader.lua instead')
+	elseif shared.GoAwareDeveloper == true then
+		warn('[goaware] NewMainScript.lua no longer injects on its own -- run loader.lua instead')
 	end
 	return
 end
@@ -23,16 +23,16 @@ local cloneref = cloneref or function(ref)
 	return ref
 end
 
-local function pistonwareHttpGet(url, nocache, attempt)
-	local adapter = shared.PistonwareDevHttpGet
+local function goawareHttpGet(url, nocache, attempt)
+	local adapter = shared.GoAwareDevHttpGet
 	if type(adapter) == 'function' then
 		return adapter(url, nocache, attempt)
 	end
 	return game:HttpGet(url, nocache)
 end
 
-local function pistonwareProtectedHttpGet(url, nocache, attempt)
-	local adapter = shared.PistonwareDevProtectedHttpGet
+local function goawareProtectedHttpGet(url, nocache, attempt)
+	local adapter = shared.GoAwareDevProtectedHttpGet
 	if type(adapter) == 'function' then
 		return adapter(url, nocache, attempt)
 	end
@@ -57,7 +57,7 @@ local function hasContent(path)
 end
 
 local function downloadFile(path, func)
-	local devLoader = shared.PistonwareDevLoadSource
+	local devLoader = shared.GoAwareDevLoadSource
 	if type(devLoader) == 'function' then
 		local body = devLoader(path)
 		return func and func(path) or body
@@ -66,7 +66,7 @@ local function downloadFile(path, func)
 		--[[ bedwars.lua only exists in the GitLab repo (kept separate/obfuscated there), at that
 		repo's ROOT even though it caches locally under games/; everything else lives in the
 		GitHub repo. ]]
-		local relPath = select(1, path:gsub('pistonware/', ''))
+		local relPath = select(1, path:gsub('goaware/', ''))
 		local isBedwars = relPath == 'games/bedwars.lua'
 		--[[ The request is retried because raw file hosts can intermittently return an empty body that
 		would otherwise get cached as a corrupt/empty file. ]]
@@ -74,9 +74,9 @@ local function downloadFile(path, func)
 		for attempt = 1, 4 do
 			local suc, res = pcall(function()
 				if isBedwars then
-					return pistonwareProtectedHttpGet('https://gitlab.com/pistonware/pistonware/-/raw/main/bedwars.lua', true, attempt)
+					return goawareProtectedHttpGet('https://gitlab.com/goaware/goaware/-/raw/main/bedwars.lua', true, attempt)
 				end
-				return pistonwareHttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/main/'..relPath, true, attempt)
+				return goawareHttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/main/'..relPath, true, attempt)
 			end)
 			if suc and res and res ~= '' and res ~= '404: Not Found' then
 				content = res
@@ -97,7 +97,7 @@ local function downloadFile(path, func)
 	return (func or readfile)(path)
 end
 
-for _, folder in {'pistonware', 'pistonware/games', 'pistonware/profiles', 'pistonware/assets', 'pistonware/libraries', 'pistonware/guis'} do
+for _, folder in {'goaware', 'goaware/games', 'goaware/profiles', 'goaware/assets', 'goaware/libraries', 'goaware/guis'} do
 	if not isfolder(folder) then
 		makefolder(folder)
 	end
@@ -105,9 +105,9 @@ end
 
 --[[ catvape profile system credit to maxlasertech ]]
 pcall(function()
-	if #listfiles('pistonware/profiles') < 3 then
+	if #listfiles('goaware/profiles') < 3 then
 		local reqSuc, res = pcall(function()
-			return pistonwareHttpGet('https://api.github.com/repos/themagicpiston/pistonware/contents/profiles', true)
+			return goawareHttpGet('https://api.github.com/repos/z33r0xV3/GOAWARE/contents/profiles', true)
 		end)
 		if reqSuc and res and res ~= '404: Not Found' then
 			local bodySuc, body = pcall(function()
@@ -119,7 +119,7 @@ pcall(function()
 					if v.type == 'file' then
 						total += 1
 						task.spawn(function()
-							pcall(downloadFile, 'pistonware/'.. ({v.path:gsub(' ', '%%20')})[1])
+							pcall(downloadFile, 'goaware/'.. ({v.path:gsub(' ', '%%20')})[1])
 							completed += 1
 						end)
 					end
@@ -136,5 +136,5 @@ pcall(function()
 	end
 end)
 
-local mainChunk = loadstring(downloadFile('pistonware/main.lua'), 'main')
+local mainChunk = loadstring(downloadFile('goaware/main.lua'), 'main')
 return mainChunk and mainChunk()

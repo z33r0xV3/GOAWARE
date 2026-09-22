@@ -63,7 +63,7 @@ those adapters just because it contains a similarly named module.
 
 `games/6872274481.lua` has these important phases:
 
-1. It refuses to run unless `shared.PistonwareAuthenticated` is true.
+1. It refuses to run unless `shared.GoAwareAuthenticated` is true.
 2. It establishes services, libraries, local-player state, inventory state, entity tracking, and
    the `bedwars` controller table.
 3. It discovers the game remotes from the live controller functions. Remote names are not a

@@ -1,13 +1,13 @@
-local pistonwareBuffer
+local goawareBuffer
 pcall(function()
 	local env = getgenv()
-	pistonwareBuffer = type(env.pistonware) == 'table' and env.pistonware.buffer or nil
+	goawareBuffer = type(env.goaware) == 'table' and env.goaware.buffer or nil
 end)
 
 local function bufferCall(method, event, message, details)
-	local callback = type(pistonwareBuffer) == 'table' and pistonwareBuffer[method] or nil
+	local callback = type(goawareBuffer) == 'table' and goawareBuffer[method] or nil
 	if type(callback) == 'function' then return callback(event, message, details) end
-	if shared.PistonwareDeveloper == true then warn('[pistonware] '..tostring(message)) end
+	if shared.GoAwareDeveloper == true then warn('[goaware] '..tostring(message)) end
 end
 
 local function bufferRaise(event, message, level)
@@ -41,10 +41,10 @@ local function deleteFolder(path)
 	end
 end
 
-if isfolder and isfolder('pistonware') then
-	local ok, err = pcall(deleteFolder, 'pistonware')
+if isfolder and isfolder('goaware') then
+	local ok, err = pcall(deleteFolder, 'goaware')
 	if not ok then
-		bufferCall('warn', 'reinstall.delete', 'failed to delete pistonware folder', {error = err})
+		bufferCall('warn', 'reinstall.delete', 'failed to delete goaware folder', {error = err})
 		return
 	end
 end
@@ -53,7 +53,7 @@ task.wait(2)
 shared.VapeSmoothBoot = true
 
 local suc, res = pcall(function()
-	return game:HttpGet('https://raw.githubusercontent.com/themagicpiston/pistonware/refs/heads/main/loader.lua', true)
+	return game:HttpGet('https://raw.githubusercontent.com/z33r0xV3/GOAWARE/refs/heads/main/loader.lua', true)
 end)
 if not suc or not res or res == '' or res == '404: Not Found' then
 	bufferRaise('reinstall.download', 'failed to download loader.lua - '..tostring(res), 0)

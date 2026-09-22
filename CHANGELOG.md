@@ -1,4 +1,4 @@
-Pistonware public changelog
+GoAware public changelog
 
 Commits covered:
 b0f34c0508fbc2d394269c8668ae86655239ea22
@@ -6,7 +6,7 @@ b0f34c0508fbc2d394269c8668ae86655239ea22
 df8071bd881d9e05c40e912f9bcef2a7186ab1c6
 
 Added public main, beta, and nightly release channel documentation and publishing workflow.
-Added staging branch documentation for pistonware-patches and upstream promotion.
+Added staging branch documentation for goaware-patches and upstream promotion.
 Added upstream channel selection and validated public projection publishing.
 Added MotionBlur with configurable strength and cleanup of owned blur effects.
 Added PromptChanger for proximity prompt range, hold duration, signal mode, and property mode changes.
@@ -30,7 +30,7 @@ Fixed queued developer reinjection authorization by restoring the developer load
 Fixed legacy proximity prompt profile settings by migrating them into PromptChanger.
 Fixed invalid profile names by falling back to a usable profile name.
 Fixed public export safety by validating the complete allowlist before publishing.
-Fixed staging synchronization with themagicpiston/pistonware through the upstream merge commit.
+Fixed staging synchronization with z33r0xV3/GOAWARE through the upstream merge commit.
 
 Removed the temporary test.txt file from the public projection.
 Removed InteractExtender because it was consolidated into PromptChanger.
@@ -40,13 +40,13 @@ Removed Codeberg delivery references because public files now use GitHub deliver
 Public script execution:
 
 Main:
-getgenv().PistonwareChannel = 'main'
-loadstring(game:HttpGet("https://raw.githubusercontent.com/themagicpiston/pistonware/refs/heads/main/loader.lua", true))()
+getgenv().GoAwareChannel = 'main'
+loadstring(game:HttpGet("https://raw.githubusercontent.com/z33r0xV3/GOAWARE/refs/heads/main/loader.lua", true))()
 
 Beta:
-getgenv().PistonwareChannel = 'beta'
-loadstring(game:HttpGet("https://raw.githubusercontent.com/themagicpiston/pistonware/refs/heads/beta/loader.lua", true))()
+getgenv().GoAwareChannel = 'beta'
+loadstring(game:HttpGet("https://raw.githubusercontent.com/z33r0xV3/GOAWARE/refs/heads/beta/loader.lua", true))()
 
 Nightly:
-getgenv().PistonwareChannel = 'nightly'
-loadstring(game:HttpGet("https://raw.githubusercontent.com/themagicpiston/pistonware/refs/heads/nightly/loader.lua", true))()
+getgenv().GoAwareChannel = 'nightly'
+loadstring(game:HttpGet("https://raw.githubusercontent.com/z33r0xV3/GOAWARE/refs/heads/nightly/loader.lua", true))()

@@ -103,7 +103,7 @@ local gameCamera = workspace.CurrentCamera
 local debugLibrary = debug
 local performanceEnabled = false
 pcall(function()
-	performanceEnabled = shared.PistonwareDeveloper == true and shared.PistonwarePerformance == true
+	performanceEnabled = shared.GoAwareDeveloper == true and shared.GoAwarePerformance == true
 end)
 
 local performanceStats = {
@@ -783,7 +783,7 @@ local positionCacheMinimumRadius = 20
 local positionCacheLimit = 8
 
 local function lowEndMode()
-	return inputService.TouchEnabled or shared.PistonwarePerformanceMode == 'Low'
+	return inputService.TouchEnabled or shared.GoAwarePerformanceMode == 'Low'
 end
 
 local function profileBegin(name)
@@ -1138,7 +1138,7 @@ entitylib.updateEntity = function(entity, notify)
 end
 
 entitylib.EntityMouse = function(entitysettings)
-	profileBegin('Pistonware.TargetAcquire')
+	profileBegin('GoAware.TargetAcquire')
 	countStat('TargetScans')
 	if not entitylib.isAlive then
 		return finishQuery(entitysettings)
@@ -1233,7 +1233,7 @@ entitylib.EntityMouse = function(entitysettings)
 end
 
 entitylib.EntityPosition = function(entitysettings)
-	profileBegin('Pistonware.TargetAcquire')
+	profileBegin('GoAware.TargetAcquire')
 	countStat('TargetScans')
 	if not entitylib.isAlive then
 		return finishQuery(entitysettings)
@@ -1319,7 +1319,7 @@ entitylib.EntityPosition = function(entitysettings)
 end
 
 entitylib.NearestDistanceSq = function(settings)
-	profileBegin('Pistonware.Proximity')
+	profileBegin('GoAware.Proximity')
 	if not entitylib.isAlive then
 		profileEnd()
 		return math.huge
@@ -1357,7 +1357,7 @@ entitylib.AllPosition = function(entitysettings)
 	if entitysettings.Output then
 		table.clear(returned)
 	end
-	profileBegin('Pistonware.TargetAcquire')
+	profileBegin('GoAware.TargetAcquire')
 	countStat('TargetScans')
 	if not entitylib.isAlive then
 		return finishQuery(entitysettings, returned)

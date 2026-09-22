@@ -1,13 +1,13 @@
 # Private checkout layout
 
-`~/Developer/pistonware` is the one persistent working directory. Its `.git` directory is the
-private repository history at `scrxpted7327/pistonware-private.git`.
+`~/Developer/goaware` is the one persistent working directory. Its `.git` directory is the
+private repository history at `scrxpted7327/goaware-private.git`.
 
 ## Filesystem boundary
 
 ```text
 ~/Developer/
-└── pistonware/
+└── goaware/
     ├── .git/                    private Git metadata only
     ├── .public-allowlist        exact public projection rules
     ├── .public-gitignore        generated public checkout ignore file
@@ -22,7 +22,7 @@ private repository history at `scrxpted7327/pistonware-private.git`.
     └── ...
 ```
 
-There is no persistent `pistonware-private/` or public checkout. The private repository has one
+There is no persistent `goaware-private/` or public checkout. The private repository has one
 branch, `main`. A public repository is created only in a temporary directory by
 `scripts/publish-public`; that temporary directory has its own public `.git`, and the private
 `.git` is never copied into it.
@@ -47,7 +47,7 @@ published.
 ## Normal private workflow
 
 ```sh
-cd ~/Developer/pistonware
+cd ~/Developer/goaware
 git pull
 # edit public or private files
 git add -A
@@ -66,12 +66,12 @@ git push
 
 The publisher requires a clean private tree, builds an exact temporary projection, rejects files
 outside the allowlist and known secret/private paths, shows the public diff, and pushes only to
-the matching branch in `scrxpted7327/pistonware-patches`. `main` is the default. If `beta` or
+the matching branch in `scrxpted7327/goaware-patches`. `main` is the default. If `beta` or
 `nightly` does not exist there yet, it is created from the public `main` projection before the
 validated files are pushed. It removes public files that are no longer present in the allowlisted
 projection.
 
-The loader consumes the release branches from `themagicpiston/pistonware`. The patches repository
+The loader consumes the release branches from `z33r0xV3/GOAWARE`. The patches repository
 is the writable staging projection; each channel must be reviewed and promoted to the corresponding
 upstream branch before that channel is available from the public loader.
 
@@ -91,7 +91,7 @@ With no `--tree`, it validates a temporary projection of the current private fil
 ```
 
 The importer accepts `--channel main`, `--channel beta`, or `--channel nightly`, clones the
-selected branch of `themagicpiston/pistonware` temporarily, compares only allowlisted paths, and
+selected branch of `z33r0xV3/GOAWARE` temporarily, compares only allowlisted paths, and
 reports readable differences. `--apply` copies reviewed public changes into the canonical tree
 without merging Git histories, deleting private-only files, or committing automatically. It fails
 closed when the selected upstream release branch does not exist yet.
